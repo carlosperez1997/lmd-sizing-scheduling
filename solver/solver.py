@@ -303,6 +303,12 @@ class Solver:
         self.__build_base_model()
         self.m.optimize()
         return self.__basic_results()
+    
+    def return_solve_base(self):
+        self.__build_base_model()
+        self.m.optimize()
+        return (self.m.ObjVal, self.x, self.i)
+        #return self.__basic_results()
 
     def solve_fixed(self) -> dict:
         self.__build_fixed_model()
