@@ -707,3 +707,6 @@ def run_solver_output(model, instance, outsourcing_cost_multiplier, regional_mul
     with open(output_path, 'w') as f:
         json.dump(results, f, indent=2)
     print(f"Results saved to {output_path}")
+
+def practice_print():
+    print("reference works")
