@@ -1,8 +1,5 @@
 
 #Modify solver.py to output relevant information for the rostering problem
-#Changes:
-#
-
 
 from argparse import ArgumentParser, Namespace
 from gurobipy import Model, GRB, tupledict
@@ -474,7 +471,7 @@ class Solver:
         return results
 
 
-#output code
+    #output code
     def __basic_output(self) -> dict:
         output = {
             'instance': [self.i.ibasename],
@@ -614,7 +611,7 @@ class Solver:
         self.m.optimize()
         return self.__flex_output()
 
-
+#command line interface run execution
 if __name__ == '__main__':
     parser = ArgumentParser(prog='solver', description='Solves one of the shift scheduling models for LMD')
     parser.add_argument('-m', '--model', action='store', choices=('base', 'fixed', 'partflex', 'flex'), required=True)
@@ -668,3 +665,45 @@ if __name__ == '__main__':
 
     with open(output_file(args), 'w') as f:
         json.dump(results, f, indent=2)
+
+#function call run execution
+def run_solver_output(model, instance, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, max_n_shifts=None, output=None):
+    args = Namespace(
+        model=model,
+        instance=instance,
+        outsourcing_cost_multiplier=outsourcing_cost_multiplier,
+        regional_multiplier=regional_multiplier,
+        global_multiplier=global_multiplier,
+        max_n_shifts=max_n_shifts,
+        output=output
+    )
+
+    # Assuming Instance and Solver classes are defined above in this script
+    i = Instance(args=args)
+    solver = Solver(args=args, i=i)
+
+    def output_file(args, i):
+        if args.output is not None:
+            return args.output
+        elif args.model == 'fixed':
+            return f"../results/results_output_{i.name}_model=fixed.json"
+        elif args.model == 'partflex':
+            return f"../results/results_output_{i.name}_mu={str(args.max_n_shifts)}_model=partflex.json"
+        elif args.model == 'flex':
+            return f"../results/results_output_{i.name}_model=flex.json"
+
+    # Model execution logic
+    if args.model == 'fixed':
+        results = solver.solve_fixed_output()
+    elif args.model == 'partflex':
+        results = solver.solve_partflex_output()
+    elif args.model == 'flex':
+        results = solver.solve_flex_output()
+    else:
+        raise ValueError("Invalid model type provided")
+
+    # Save results
+    output_path = output_file(args, i)
+    with open(output_path, 'w') as f:
+        json.dump(results, f, indent=2)
+    print(f"Results saved to {output_path}")
