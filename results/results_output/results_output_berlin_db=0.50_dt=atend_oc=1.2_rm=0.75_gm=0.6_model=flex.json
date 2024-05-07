@@ -1,0 +1,15 @@
+{
+  "instance": [],
+  "model": [],
+  "city": [],
+  "demand_baseline": [],
+  "demand_type": [],
+  "outsourcing_cost_multiplier": [],
+  "region_multiplier": [],
+  "global_multiplier": [],
+  "max_n_shift_start_periods": [],
+  "actual_n_shift_start_periods": [],
+  "region": [],
+  "area": [],
+  "theta": []
+}

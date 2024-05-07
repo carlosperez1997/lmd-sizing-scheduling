@@ -58,6 +58,7 @@ class Instance:
 
         self.i = self.__load_instance(self.instance_file)
         self.__compute_data(**kwargs)
+        print("in instance")
 
     def __compute_data(self, **kwargs) -> None:
         if self.args is None:
@@ -168,6 +169,7 @@ class Solver:
     def __init__(self, args: Namespace, i: Instance):
         self.args = args
         self.i = i
+        print("in solver")
 
     def __build_base_model(self) -> None:
 
@@ -529,23 +531,23 @@ class Solver:
         output['region'] = []
         output['area'] = []
         output['theta'] = []
-        output['x__a_theta'] = []
-        output['zminus__a_theta'] = []
-        for region in self.i.regions:
-            for area in self.i.reg_areas[region]:
-                for theta in self.i.periods:
-                    output['region'].append(region)
-                    output['area'].append(area)
-                    output['theta'].append(theta)
-                    output['x__a_theta'].append(int(self.x[area,theta].X))
-                    if any(self.zminus[area, theta].X > 0.1):
-                        output['zminus__a_theta'].append(int(self.zminus[area,theta].X))
-                    else:
-                        output['zminus__a_theta'].append(int(0))
-        n_rows = len(output['region'])
+        # output['x__a_theta'] = []
+        # output['zminus__a_theta'] = []
+        # for region in self.i.regions:
+        #     for area in self.i.reg_areas[region]:
+        #         for theta in self.i.periods:
+        #             output['region'].append(region)
+        #             output['area'].append(area)
+        #             output['theta'].append(theta)
+        #             # output['x__a_theta'].append(int(self.x[area,theta].X))
+        #             # if any(self.zminus[area, theta].X > 0.1):
+        #             #     output['zminus__a_theta'].append(int(self.zminus[area,theta].X))
+        #             # else:
+        #             #     output['zminus__a_theta'].append(int(0))
+        # n_rows = len(output['region'])
 
-        for val in basic_output.keys():
-            output[val] = basic_output[val]*n_rows
+        # for val in basic_output.keys():
+        #     output[val] = basic_output[val]*n_rows
 
         return output
 
@@ -686,11 +688,11 @@ def run_solver_output(model, instance, outsourcing_cost_multiplier, regional_mul
         if args.output is not None:
             return args.output
         elif args.model == 'fixed':
-            return f"../results/results_output_{i.name}_model=fixed.json"
+            return f"../results/results_output/results_output_{i.name}_model=fixed.json"
         elif args.model == 'partflex':
-            return f"../results/results_output_{i.name}_mu={str(args.max_n_shifts)}_model=partflex.json"
+            return f"../results/results_output/results_output_{i.name}_mu={str(args.max_n_shifts)}_model=partflex.json"
         elif args.model == 'flex':
-            return f"../results/results_output_{i.name}_model=flex.json"
+            return f"../results/results_output/results_output_{i.name}_model=flex.json"
 
     # Model execution logic
     if args.model == 'fixed':
