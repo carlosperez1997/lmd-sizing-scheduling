@@ -510,7 +510,8 @@ class Solver:
 
         for val in basic_output.keys():
             output[val] = basic_output[val]*n_rows
-
+        print(output.keys())
+        print(len(output['region']))
         return output
 
     def __flex_output(self) -> dict:
@@ -531,46 +532,8 @@ class Solver:
         output['region'] = []
         output['area'] = []
         output['theta'] = []
-        # output['x__a_theta'] = []
-        # output['zminus__a_theta'] = []
-        # for region in self.i.regions:
-        #     for area in self.i.reg_areas[region]:
-        #         for theta in self.i.periods:
-        #             output['region'].append(region)
-        #             output['area'].append(area)
-        #             output['theta'].append(theta)
-        #             # output['x__a_theta'].append(int(self.x[area,theta].X))
-        #             # if any(self.zminus[area, theta].X > 0.1):
-        #             #     output['zminus__a_theta'].append(int(self.zminus[area,theta].X))
-        #             # else:
-        #             #     output['zminus__a_theta'].append(int(0))
-        # n_rows = len(output['region'])
-
-        # for val in basic_output.keys():
-        #     output[val] = basic_output[val]*n_rows
-
-        return output
-
-    def __partflex_output(self) -> dict:
-        basic_output = self.__basic_output()
-        basic_output['max_n_shift_start_periods'] = [int(args.max_n_shifts)]
-        periods_with_start = 0
-        for theta in self.i.periods:
-            if not any((a, theta) in self.zminus for a in self.i.areas):
-                continue
-            if any(self.zminus[a, theta].X > 0.1 for a in self.i.areas):
-                periods_with_start += 1
-        basic_output['actual_n_shift_start_periods'] = [periods_with_start]
-
-        output = dict()
-        for val in basic_output.keys():
-            output[val] = []
-        output['region'] = []
-        output['area'] = []
-        output['theta'] = []
         output['x__a_theta'] = []
         output['zminus__a_theta'] = []
-        output['w__theta'] = []
         for region in self.i.regions:
             for area in self.i.reg_areas[region]:
                 for theta in self.i.periods:
@@ -578,25 +541,15 @@ class Solver:
                     output['area'].append(area)
                     output['theta'].append(theta)
                     output['x__a_theta'].append(int(self.x[area,theta].X))
-                    if any(self.zminus[area, theta].X > 0.1):
-                        output['zminus__a_theta'].append(int(self.zminus[area,theta].X))
-                    else:
-                        output['zminus__a_theta'].append(int(0))
-
-                    if theta in range(0, len(self.w.keys())+1):
-                        if any(self.w[theta].X > 0.1):
-                            output['w__theta'].append(int(self.w[theta].X))
-                        else:
-                            output['w__theta'].append(int(0))
-                    else:
-                        output['w__theta'].append(np.nan)
-
+                    output['zminus__a_theta'].append(int(self.zminus[area,theta].X))
         n_rows = len(output['region'])
 
         for val in basic_output.keys():
             output[val] = basic_output[val]*n_rows
-
+        print(output.keys())
+        print(len(output['zminus__a_theta']))
         return output
+
 
     def solve_fixed_output(self) -> dict:
         self.__build_fixed_model()
@@ -606,7 +559,7 @@ class Solver:
     def solve_partflex_output(self) -> dict:
         self.__build_partflex_model()
         self.m.optimize()
-        return self.__partflex_output()
+        return self.__flex_output()
 
     def solve_flex_output(self) -> dict:
         self.__build_flexible_model()
