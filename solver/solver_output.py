@@ -281,7 +281,8 @@ class Solver:
         else:
             return NotImplementedError('Shift length only implemented for n_periods == 8')
 
-        w_idx = range(self.i.n_periods - shift_len - 1)
+        #JC constraint updated
+        w_idx = range(self.i.n_periods - shift_len - 1) #changed from a -1 to a +1
         self.w = self.m.addVars(w_idx, vtype=GRB.BINARY, name='w')
 
         self.m.addConstrs((
