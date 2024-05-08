@@ -247,12 +247,13 @@ class Solver:
             for a in self.i.areas:
                 self.zplus[a, theta].UB = 0
 
+        #CM constraint needs to be updated
         self.m.addConstrs((
             sum(self.zminus[a, theta] for a in self.i.reg_areas[region]) == \
             sum(self.zplus[a, theta + shift_len - 1] for a in self.i.reg_areas[region])
             for region in self.i.regions
             for theta in self.i.periods
-            if theta < self.i.n_periods - 1 - shift_len
+            if theta < self.i.n_periods + 1 - shift_len #changed from -1 to +1
         ), name='fix_region_n_couriers_in_shift')
 
         self.m.addConstrs((
