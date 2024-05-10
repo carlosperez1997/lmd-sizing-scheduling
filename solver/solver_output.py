@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import json
 import numpy as np
+import pandas as pd
 
 
 CAPACITY = 5
@@ -552,7 +553,6 @@ class Solver:
         print(len(output['zminus__a_theta']))
         return output
 
-
     def solve_fixed_output(self) -> dict:
         self.__build_fixed_model()
         self.m.optimize()
@@ -567,61 +567,6 @@ class Solver:
         self.__build_flexible_model()
         self.m.optimize()
         return self.__flex_output()
-
-#command line interface run execution
-if __name__ == '__main__':
-    parser = ArgumentParser(prog='solver', description='Solves one of the shift scheduling models for LMD')
-    parser.add_argument('-m', '--model', action='store', choices=('base', 'fixed', 'partflex', 'flex'), required=True)
-    parser.add_argument('-i', '--instance', action='store', required=True)
-    parser.add_argument('-c', '--outsourcing-cost-multiplier', action='store', type=float, required=True)
-    parser.add_argument('-r', '--regional-multiplier', action='store', type=float, required=True)
-    parser.add_argument('-g', '--global-multiplier', action='store', type=float, required=True)
-    parser.add_argument('-u', '--max-n-shifts', action='store', type=int)
-    parser.add_argument('-o', '--output', action='store')
-    args = parser.parse_args()
-
-    i = Instance(args=args)
-    solver = Solver(args=args, i=i)
-
-    def output_file(args):
-        # if args.output is not None:
-        #     return args.output
-        # elif args.model == 'base':
-        #     return "../results/results_" + i.name + "_model=base.json"
-        # elif args.model == 'fixed':
-        #     return "../results/results_" + i.name + "_model=fixed.json"
-        # elif args.model == 'partflex':
-        #     return "../results/results_" + i.name + "_mu=" + str(args.max_n_shifts) + "_model=partflex.json"
-        # elif args.model == 'flex':
-        #     return "../results/results_" + i.name + "_model=flex.json"
-
-        if args.output is not None:
-            return args.output
-        elif args.model == 'fixed':
-            return "../results/results_output_" + i.name + "_model=fixed.json"
-        elif args.model == 'partflex':
-            return "../results/results_output_" + i.name + "_mu=" + str(args.max_n_shifts) + "_model=partflex.json"
-        elif args.model == 'flex':
-            return "../results/results_output_" + i.name + "_model=flex.json"
-
-    # if args.model == 'base':
-    #     results = solver.solve_base()
-    # elif args.model == 'fixed':
-    #     results = solver.solve_fixed()
-    # elif args.model == 'partflex':
-    #     results = solver.solve_partflex()
-    # elif args.model == 'flex':
-    #     results = solver.solve_flex()
-
-    if args.model == 'fixed':
-        results = solver.solve_fixed_output()
-    elif args.model == 'partflex':
-        results = solver.solve_partflex_output()
-    elif args.model == 'flex':
-        results = solver.solve_flex_output()
-
-    with open(output_file(args), 'w') as f:
-        json.dump(results, f, indent=2)
 
 #function call run execution
 def run_solver_output(model, instance, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, max_n_shifts=None, output=None):
@@ -643,11 +588,11 @@ def run_solver_output(model, instance, outsourcing_cost_multiplier, regional_mul
         if args.output is not None:
             return args.output
         elif args.model == 'fixed':
-            return f"../results/results_output/results_output_{i.name}_model=fixed.json"
+            return f"../results/results_output/{i.name}_model=fixed.json"
         elif args.model == 'partflex':
-            return f"../results/results_output/results_output_{i.name}_mu={str(args.max_n_shifts)}_model=partflex.json"
+            return f"../results/results_output/{i.name}_mu={str(args.max_n_shifts)}_model=partflex.json"
         elif args.model == 'flex':
-            return f"../results/results_output/results_output_{i.name}_model=flex.json"
+            return f"../results/results_output/{i.name}_model=flex.json"
 
     # Model execution logic
     if args.model == 'fixed':
@@ -664,6 +609,90 @@ def run_solver_output(model, instance, outsourcing_cost_multiplier, regional_mul
     with open(output_path, 'w') as f:
         json.dump(results, f, indent=2)
     print(f"Results saved to {output_path}")
+
+#function call run execution
+def run_solver_shift(model, instance, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, max_n_shifts=None, output=None):
+    args = Namespace(
+        model=model,
+        instance=instance,
+        outsourcing_cost_multiplier=outsourcing_cost_multiplier,
+        regional_multiplier=regional_multiplier,
+        global_multiplier=global_multiplier,
+        max_n_shifts=max_n_shifts,
+        output=output
+    )
+
+    # Assuming Instance and Solver classes are defined above in this script
+    i = Instance(args=args)
+    solver = Solver(args=args, i=i)
+
+    def output_file(args, i):
+        if args.output is not None:
+            return args.output
+        elif args.model == 'fixed':
+            return f"../shifts/{i.name}_model=fixed.json"
+        elif args.model == 'partflex':
+            return f"../shifts/{i.name}_mu={str(args.max_n_shifts)}_model=partflex.json"
+        elif args.model == 'flex':
+            return f"../shifts/{i.name}_model=flex.json"
+
+    # Model execution logic
+    if args.model == 'fixed':
+        results = solver.solve_fixed_output()
+    elif args.model == 'partflex':
+        results = solver.solve_partflex_output()
+    elif args.model == 'flex':
+        results = solver.solve_flex_output()
+    else:
+        raise ValueError("Invalid model type provided")
+
+    #change the results to be in the shape of shift information
+    if args.model == 'fixed':
+        #get the regions and make a dictionary
+        dict_shifts = {}
+        for region in i.regions:
+            dict_shifts[region] = {}
+            dict_shifts[region]['shifts_start'] = {0:0,1:4}
+            dict_shifts[region]['shifts_end'] = {0:4,1:8}
+    elif args.model == 'partflex':
+        df_ = pd.DataFrame(results)
+        df_.sort_values(by = ['region','theta'], inplace = True)
+        df_ = df_[df_['zminus__a_theta']==1]
+        df_.drop_duplicates(subset = ['region','theta'], inplace = True)
+        dict_shifts = {}
+        for region in list(df_['region']):
+            dict_shifts[region] = {}
+            dict_shifts[region]['shifts_start'] = {}
+            dict_shifts[region]['shifts_end'] = {}
+            for index_, start_theta in enumerate(df_[df_['region']==region]['theta'].tolist()):
+                dict_shifts[region]['shifts_start'][index_] = start_theta
+                dict_shifts[region]['shifts_end'][index_] = start_theta + 4
+    elif args.model == 'flex':
+        df_ = pd.DataFrame(results)
+        df_.sort_values(by = ['region','theta'], inplace = True)
+        df_ = df_[df_['zminus__a_theta']==1]
+        df_.drop_duplicates(subset = ['region','theta'], inplace = True)
+        dict_shifts = {}
+        for region in df_['region'].unique().tolist():
+            dict_shifts[region] = {}
+            dict_shifts[region]['shifts_start'] = {}
+            dict_shifts[region]['shifts_end'] = {}
+            for index_, start_theta in enumerate(df_[df_['region']==region]['theta'].tolist()):
+                dict_shifts[region]['shifts_start'][index_] = start_theta
+                dict_shifts[region]['shifts_end'][index_] = start_theta + 4
+    else:
+        raise ValueError("Invalid model type provided")
+
+    # Save results
+    output_path = output_file(args, i)
+    with open(output_path, 'w') as f:
+        json.dump(dict_shifts, f, indent=2)
+    print(f"Results saved to {output_path}")
+
+
+
+
+
 
 def practice_print():
     print("reference works")
