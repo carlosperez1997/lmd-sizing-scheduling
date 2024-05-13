@@ -7,8 +7,8 @@ import gurobipy as gp
 import json
 
 class Instance():
-    def __init__(self, regions, areas, region_area_map, area_region_map, period_demands, period_couriers,
-                 n_employees, min_hours_worked, max_hours_worked, max_unique_starts,
+    def __init__(self, regions, areas, region_area_map, area_map, period_demands, period_couriers,
+                 region_employees, min_hours_worked, max_hours_worked, max_unique_starts,
                  shifts_start, shifts_end,
                  outsourcing_cost_multiplier=1.5, n_periods = 8, n_days = 7, n_hours = 8):
         
@@ -16,7 +16,7 @@ class Instance():
         self.areas = areas
         self.region_area_map = region_area_map
         self.n_areas = len(areas)
-        self.area_region_map = area_region_map
+        self.area_map = area_map
         self.n_periods = n_periods
         self.n_days = n_days
         self.n_hours = n_hours
@@ -26,7 +26,9 @@ class Instance():
         self.period_demands = period_demands
         self.period_couriers = period_couriers
 
-        self.n_employees = n_employees
+        self.region_employees = region_employees
+        self.n_employees = sum(value for reg, value in region_employees.items())
+
         self.min_hours_worked = min_hours_worked
         self.max_hours_worked = max_hours_worked
         self.max_unique_starts = max_unique_starts
@@ -47,7 +49,7 @@ class Solver():
         # Areas 
         self.A = {}
         for r in self.R:
-            self.A[r] = [ self.i.area_region_map[a] for a in self.i.region_area_map[r] ]
+            self.A[r] = [ self.i.area_map[a] for a in self.i.region_area_map[r] ]
 
         # Set of all shifts available
         self.P = {}
@@ -89,7 +91,8 @@ class Solver():
         # Employees
         self.E = {}
         for r in self.R:
-            self.E[r] = [i for i in range(self.i.n_employees)]
+            self.E[r] = [i for i in range(self.i.region_employees[r])]
+
         self.employees = [e for e in range(self.i.n_employees)]
 
         # Min hours worked for employee e
@@ -164,7 +167,6 @@ class Solver():
                     for e in self.E[r]:
                         for theta in self.Theta[end+1:]:
                             for d in self.D:
-                                #print(e, area_region_map[a], theta, int(shift), d)
                                 self.m.addConstr((self.k_var[e, a, theta, d] * self.r_var[e, int(shift), d] == 0),
                                     name = f'end_time_{e}_{a}_{shift}_{d}'          
                                 )
@@ -262,12 +264,13 @@ class Solver():
         
             outsourcing = sum([self.omega_var[a, theta, d].X for r in self.R for a in self.A[r] for theta in self.Theta for d in self.D])
             obj_value = self.m.ObjVal
-
-            # Utilization rate
             
 
+
         return {'regions': self.i.regions, 'n_employees': self.i.n_employees, 'obj_value': obj_value, 
-                'hiring_costs': hiring, 'outsourcing_costs': outsourcing, 'exec_time': self.exec_time}
+                'elapsed_time': self.m.Runtime, 'status': self.m.status,
+                'hiring_costs': hiring, 'outsourcing_costs': outsourcing, 'exec_time': self.exec_time,
+                'n_variables': self.m.NumVars, 'n_constraints': self.m.NumConstrs, 'n_nonzeroes': self.m.NumNZs}
 
         
 
