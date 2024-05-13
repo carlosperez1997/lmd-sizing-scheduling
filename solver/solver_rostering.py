@@ -53,7 +53,7 @@ class Instance:
 
     #employees
     n_employees: dict #keys - region: int - n_employees
-    employees: dict #keys - region: list of employee index
+    employees: dict #keys - region: list of employee index (employee index is distinct)
 
     #shifts in region R
     n_shifts: dict #keys - region: int - n_shifts
@@ -72,8 +72,8 @@ class Instance:
     #demand: packages and required couriers
     n_scenarios: dict #keys - day: int - n_scenarios
     scenarios: dict #keys - day: list - scenarios
-    sdemand: dict #number of packages (s, a, theta, day)
-    srequired: dict #number of couriers (s, a, theta, day)
+    sdemand: tupledict #number of packages (s, a, theta, day)
+    srequired: tupledict #number of couriers (s, a, theta, day)
 
     #GLOBAL LEVEL
 
@@ -156,11 +156,13 @@ class Instance:
                 self.n_shifts[region] = 0
                 self.shifts[region] = []
         
-        #employees (region)
+        #employees (region) (employee index is distinct)
+        counter_ = 0
         for region in self.regions:
             if region in list(self.k.keys()):
                 self.n_employees[region] = self.k[region]
-                self.employees[region] = [iter_ for iter_ in range(self.n_employees[region])]
+                self.employees[region] = [iter_ for iter_ in range(counter_, counter_ + self.n_employees[region])]
+                counter_ += self.n_employees[region]
             else:
                 self.n_employees[region] = 0
                 self.employees[region] = []
@@ -191,11 +193,11 @@ class Instance:
                 a = data['area_id']
                 for theta, d in enumerate(data['demand']):
                     for day in self.days:
-                        self.sdemand[s, a, theta, day] = d
+                        self.sdemand[(s, a, theta, day)] = d
 
                 for theta, m in enumerate(data['required_couriers']):
                     for day in self.days:
-                        self.srequired[s, a, theta, day] = m
+                        self.srequired[(s, a, theta, day)] = m
 
         self.ub_reg, self.ub_global = self.__get_ubs()
 
@@ -264,38 +266,160 @@ class Instance:
         return ub_reg, ub_global
 
 
-# class Solver:
-#     args: Namespace
-#     i: Instance
+class Solver:
+    args: Namespace
+    i: Instance
 
-#     m: Model
-#     x: tupledict
-#     omega: tupledict
-#     y: Optional[tupledict]
-#     z: Optional[tupledict]
-#     zplus: Optional[tupledict]
-#     zminus: Optional[tupledict]
+    m: Model
+    
+    #decision variables
+    r: tupledict #(e,p,day)
+    k: tupledict #(e,a,theta,day)
+    U: tupledict #(e, p)
+    omega: tupledict #(s,a,theta,day)
 
-#     #CM added
-#     w: Optional[dict]
+    def __init__(self, args: Namespace, i: Instance):
+        self.args = args
+        self.i = i
 
-#     def __init__(self, args: Namespace, i: Instance):
-#         self.args = args
-#         self.i = i
-#         print("in solver")
+    def __build_model(self) -> None:
+        self.m = Model()
 
-#     def __build_base_model(self) -> None:
+        #r decision variable (e,p,d)
+        self.r = {(employee, shift_start, day): self.m.addVar(vtype=GRB.BINARY, name='r') 
+                for region in self.i.regions 
+                for employee in self.i.employees[region] 
+                for shift_start in self.i.shifts[region] 
+                for day in self.i.days}
 
-#         #objective function
-#         self.m = Model()
-#         self.x = self.m.addVars(self.i.areas, self.i.periods, vtype=GRB.INTEGER, lb=0, obj=1, name='x')
-#         self.omega = self.m.addVars(self.i.areas, self.i.periods, self.i.scenarios, vtype=GRB.CONTINUOUS, obj=1/self.i.n_scenarios, name='omega')
+        #k decision variable (e,a,theta,d)
+        self.k = {(employee, area, theta, day): self.m.addVar(vtype = GRB.BINARY, obj = 1, name = 'k')
+                  for region in self.i.regions
+                  for employee in self.i.employees[region]
+                  for area in self.i.reg_areas[region]
+                  for day in self.i.days
+                  for theta in self.i.periods[day]}
 
-#         self.m.addConstrs((
-#             sum(self.x[a, theta] for a in self.i.reg_areas[region]) <= self.i.ub_reg[region]
-#                 for region in self.i.regions
-#                 for theta in self.i.periods
-#         ), name='reg_bound')
+        #U decision variable (e,p)
+        self.U = {(employee, shift_start): self.m.addVar(vtype=GRB.BINARY, name='U') 
+                for region in self.i.regions 
+                for employee in self.i.employees[region] 
+                for shift_start in self.i.shifts[region]}
+
+        #omega decision variable (s,a,theta,day)
+        self.omega = {(scenario, area, theta, day): self.m.addVar(vtype=GRB.CONTINUOUS, lb = 0, obj=1/self.i.n_scenarios[day], name='omega') 
+                    for day in self.i.days 
+                    for scenario in self.i.scenarios[day] 
+                    for area in self.i.areas 
+                    for theta in self.i.periods[day]}
+
+        #constraints
+        self.m.addConstrs((
+            sum(self.k[(employee, area, theta, day)]
+                for area in self.i.area_regs[region]
+                for theta in range(shift_start, shift_start+4)
+                )
+            ==
+            (1/2)*HOURS_IN_SHIFT_P*self.r[(employee, shift_start, day)]
+                for region in self.i.regions
+                for employee in self.i.employees[region]
+                for shift_start in self.i.shifts[region]
+                for day in self.i.days
+        ), name = 'connect_employees_moving_areas')
+
+        self.m.addConstrs((
+            sum(self.k[(employee, area, theta, day)]
+                for area in self.i.area_regs[region]
+                )
+            <= 1
+                for region in self.i.regions
+                for employee in self.i.employees[region]
+                for day in self.i.days
+                for theta in self.i.periods[day]
+        ), name = 'one_area_at_a_time')
+
+        self.m.addConstrs((
+            sum(self.r[(employee, shift_start, day)]
+                for shift_start in self.i.shifts[region]
+                )
+            <= 1
+                for region in self.i.regions
+                for employee in self.i.employees[region]
+                for day in self.i.days
+        ), name = 'one_shift_a_day')
+
+        self.m.addConstrs((
+            sum(self.r[(employee, shift_start, day)]
+                for shift_start in self.i.shifts[region]
+                for day in self.i.days
+                )
+            <= 6
+                for region in self.i.regions
+                for employee in self.i.employees[region]
+        ), name = 'one_rest_day_per_week')
+
+        self.m.addConstrs((
+            sum(HOURS_IN_SHIFT_P*self.r[(employee, shift_start, day)]
+                for shift_start in self.i.shifts[region]
+                for day in self.i.days
+            )
+            >= self.i.h_min
+                for region in self.i.regions
+                for employee in self.i.employees[region]
+        ), name = 'min_hours_worked')
+
+        self.m.addConstrs((
+            sum(HOURS_IN_SHIFT_P*self.r[(employee, shift_start, day)]
+                for shift_start in self.i.shifts[region]
+                for day in self.i.days
+            )
+            <= self.i.h_max
+                for region in self.i.regions
+                for employee in self.i.employees[region]
+        ), name = 'max_hours_worked')
+
+        self.m.addConstr((
+            sum(self.r[(employee, shift_start, day)]
+                for day in self.i.days
+            )
+            <= self.U[(employee, shift_start)]*(10000000000)
+                for region in self.i.regions
+                for employee in self.i.employees[region]
+                for shift_start in self.shifts[region]
+        ), name = 'max_different_start1')
+
+        self.m.addConstr((
+            sum(self.U[(employee, shift_start)]
+                for shift_start in self.i.shifts[region]
+            )
+            <= self.i.b_max
+                for region in self.i.regions
+                for employee in self.i.employees[region]
+        ), name = 'max_different_start2')
+
+        self.m.addConstr((
+            self.omega[(scenario, area, theta, day)] >= (self.i.srequired[(scenario, area, theta, day)] - sum(self.k[(employee, area, theta, day)] for employee in self.i.employees[region]))*(self.i.sdemand[(scenario, area, theta, day)/self.i.srequired[(scenario, area, theta, day)]])*(self.i.outsourcing_cost)
+            for region in self.i.regions
+            for area in self.i.reg_areas[region]
+            for day in self.i.days
+            for theta in self.i.periods[day]
+            for scenario in self.i.scenarios[day]
+        ), name = 'outsourcing_demand')
+
+#write a function to return results
+
+    # def __build_base_model(self) -> None:
+
+    #     #objective function
+    #     self.m = Model()
+    #     self.x = self.m.addVars(self.i.areas, self.i.periods, vtype=GRB.INTEGER, lb=0, obj=1, name='x')
+    #     self.omega = self.m.addVars(self.i.areas, self.i.periods, self.i.scenarios, vtype=GRB.CONTINUOUS, obj=1/self.i.n_scenarios, name='omega')
+
+    #     self.m.addConstrs((
+    #         sum(self.x[a, theta] for a in self.i.reg_areas[region]) <= self.i.ub_reg[region]
+    #             for region in self.i.regions
+    #             for theta in self.i.periods
+    #     ), name='reg_bound')
 
 #         self.m.addConstrs((
 #             self.x.sum('*', theta) <= self.i.ub_global
