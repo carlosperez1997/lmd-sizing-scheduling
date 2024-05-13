@@ -35,7 +35,7 @@ class Instance():
         
         self.shifts_start = shifts_start
         self.shifts_end = shifts_end
-        self.n_shifts = len(shifts_start[regions[0]].keys())
+        self.n_shifts = max([len(shifts_start[s]) for s in shifts_start])
 
 
 class Solver():
@@ -52,6 +52,7 @@ class Solver():
             self.A[r] = [ self.i.area_map[a] for a in self.i.region_area_map[r] ]
 
         # Set of all shifts available
+        # TODO: Shifts are regional level
         self.P = {}
         self.shifts = [s for s in range(self.i.n_shifts)]
         for r in self.R:
@@ -90,8 +91,10 @@ class Solver():
 
         # Employees
         self.E = {}
+        prev_start = 0
         for r in self.R:
-            self.E[r] = [i for i in range(self.i.region_employees[r])]
+            self.E[r] = [prev_start+i for i in range(self.i.region_employees[r])]
+            prev_start += len(self.E[r])
 
         self.employees = [e for e in range(self.i.n_employees)]
 
@@ -104,7 +107,8 @@ class Solver():
         # Max differing starts
         self.b_max = {e: self.i.max_unique_starts for e in self.employees}
 
-    def solve(self):
+
+    def solve(self, time_limit=2*60):
         self.define_parameters()
 
         start = time.time()
@@ -242,7 +246,7 @@ class Solver():
         )
 
         #self.m.setParam('OutputFlag', 0) # No logs 
-        self.m.setParam('TimeLimit', 2*60)
+        self.m.setParam('TimeLimit', time_limit)
         self.m.ModelSense = GRB.MINIMIZE
         
         # SOLVE
@@ -268,6 +272,7 @@ class Solver():
 
 
         return {'regions': self.i.regions, 'n_employees': self.i.n_employees, 'obj_value': obj_value, 
+                'lower_bound' : self.m.objbound, 
                 'elapsed_time': self.m.Runtime, 'status': self.m.status,
                 'hiring_costs': hiring, 'outsourcing_costs': outsourcing, 'exec_time': self.exec_time,
                 'n_variables': self.m.NumVars, 'n_constraints': self.m.NumConstrs, 'n_nonzeroes': self.m.NumNZs}
