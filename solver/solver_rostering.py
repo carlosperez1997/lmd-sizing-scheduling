@@ -89,7 +89,7 @@ class Instance:
     max_n_shifts = Optional[int] 
     instance_file: str #where all the information comes from
     shift_file: str #where region/shift information comes from
-    workforce_file: str
+    workforce_dict: dict
 
     #unsure if needed
     ub_reg: dict #upper bound
@@ -106,7 +106,7 @@ class Instance:
             self.outsourcing_cost_multiplier = kwargs['outsourcing_cost_multiplier']
             self.model = kwargs['model']
             self.shift_file = kwargs['shift_file']
-            self.workforce_file = kwargs['workforce_file']
+            self.workforce_dict = kwargs['workforce_dict']
             self.n_days = kwargs['n_days']
         else:
             self.instance_file = self.args.instance_file
@@ -121,7 +121,8 @@ class Instance:
         #load json instance_file dictionary
         self.i = self.__load_instance(self.instance_file)
         self.j = self.__load_shift(self.shift_file)
-        self.k = self.__load_workforce(self.workforce_file)
+        # self.k = self.__load_workforce(self.workforce_file)
+        self.k = self.workforce_dict
 
         #initialize the rest of the class arguments
         self.__compute_data(**kwargs)
@@ -458,7 +459,7 @@ class Solver:
         return self.__roster_output()
 
 #function call run execution
-def run_roster_solver_results(model, instance_file, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, shift_file, workforce_file, n_days, max_n_shifts=None, output=None):
+def run_roster_solver_results(model, instance_file, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, shift_file, workforce_dict, n_days, max_n_shifts=None, output=None):
     args = Namespace(
         model=model,
         instance_file=instance_file,
@@ -466,7 +467,7 @@ def run_roster_solver_results(model, instance_file, outsourcing_cost_multiplier,
         regional_multiplier=regional_multiplier,
         global_multiplier=global_multiplier,
         shift_file = shift_file,
-        workforce_file = workforce_file,
+        workforce_dict = workforce_dict,
         n_days = n_days,
         max_n_shifts=max_n_shifts,
         output=output
@@ -481,7 +482,7 @@ def run_roster_solver_results(model, instance_file, outsourcing_cost_multiplier,
     return roster_results
 
 
-def run_roster_solver_output(model, instance_file, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, shift_file, workforce_file, n_days, max_n_shifts=None, output=None):
+def run_roster_solver_output(model, instance_file, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, shift_file, workforce_dict, n_days, max_n_shifts=None, output=None):
     args = Namespace(
         model=model,
         instance_file=instance_file,
@@ -489,7 +490,7 @@ def run_roster_solver_output(model, instance_file, outsourcing_cost_multiplier, 
         regional_multiplier=regional_multiplier,
         global_multiplier=global_multiplier,
         shift_file = shift_file,
-        workforce_file = workforce_file,
+        workforce_dict = workforce_dict,
         n_days = n_days,
         max_n_shifts=max_n_shifts,
         output=output
