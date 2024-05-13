@@ -241,7 +241,7 @@ class Solver():
             )
         )
 
-        self.m.setParam('OutputFlag', 0) # No logs 
+        #self.m.setParam('OutputFlag', 0) # No logs 
         self.m.setParam('TimeLimit', 2*60)
         self.m.ModelSense = GRB.MINIMIZE
         
