@@ -36,6 +36,8 @@ class Instance:
     outsourcing_cost_multiplier: float #
     outsourcing_cost: float #
 
+    #REGION LEVEL
+
     #regions
     dregions: dict
     n_regions: int
@@ -50,26 +52,30 @@ class Instance:
     area_regs: dict
 
     #employees
-    n_employees: dict
-    employees: dict #(of lists)
+    n_employees: dict #keys - region: int - n_employees
+    employees: dict #keys - region: list of employee index
 
     #shifts in region R
-    n_shifts: dict #(r)
-    shifts: dict #(r)
+    n_shifts: dict #keys - region: int - n_shifts
+    shifts: dict #keys - region: list of theta start times
 
-    #theta
-    n_periods: int
-    periods: list
-
+    #DAY LEVEL
+    
     #days
     n_days: int
     days: list
 
+    #theta
+    n_periods: dict #keys - day: int - n_periods
+    periods: dict #keys - day: list - thetas
+
     #demand: packages and required couriers
-    n_scenarios: int
-    scenarios: list
-    sdemand: dict #number of packages (s,a,theta)
-    srequired: dict #number of couriers (s,a,theta)
+    n_scenarios: dict #keys - day: int - n_scenarios
+    scenarios: dict #keys - day: list - scenarios
+    sdemand: dict #number of packages (s, a, theta, day)
+    srequired: dict #number of couriers (s, a, theta, day)
+
+    #GLOBAL LEVEL
 
     #rostering constraints
     h_min: int #min hours worked by all employees
@@ -87,7 +93,6 @@ class Instance:
     #unsure if needed
     ub_reg: dict #upper bound
     ub_global: int #upper bound
-
 
     def __init__(self, args: Optional[Namespace], **kwargs):
         self.args = args
@@ -124,9 +129,6 @@ class Instance:
     def __compute_data(self, **kwargs) -> None:
         self.outsourcing_cost = COST_PER_COURIER_AND_PERIOD * self.outsourcing_cost_multiplier
 
-        #day
-        self.days = [iter_ for iter_ in range(self.n_days)]
-
         #region
         self.dregions = self.i['geography']['city']['regions']
         self.n_regions = len(self.dregions)
@@ -162,12 +164,23 @@ class Instance:
                 self.n_employees[region] = 0
                 self.employees[region] = []
 
-        self.n_scenarios = self.i['num_scenarios']
-        self.scenarios = list(range(self.n_scenarios))
+        #day
+        self.days = [iter_ for iter_ in range(self.n_days)]
 
-        self.n_periods = self.i['num_time_intervals']
-        self.periods = list(range(self.n_periods))
-        
+        #day level variables
+
+        #periods (day)
+        for day in self.days:
+            self.n_periods[day] = self.i['num_time_intervals']
+            self.periods[day] = list(range(self.n_periods))
+
+        #scenarios (day)
+        for day in self.days:
+            self.n_scenarios[day] = self.i['num_scenarios']
+            self.scenarios[day] = list(range(self.n_scenarios))
+
+        #demand/required (s, a, theta, day)
+
         self.sdemand = dict()
         self.srequired = dict()
 
@@ -175,12 +188,13 @@ class Instance:
             s = scenario['scenario_num']
             for data in scenario['data']:
                 a = data['area_id']
-
                 for theta, d in enumerate(data['demand']):
-                    self.sdemand[s, a, theta] = d
+                    for day in self.days:
+                        self.sdemand[s, a, theta, day] = d
 
                 for theta, m in enumerate(data['required_couriers']):
-                    self.srequired[s, a, theta] = m
+                    for day in self.days:
+                        self.srequired[s, a, theta, day] = m
 
         self.ub_reg, self.ub_global = self.__get_ubs()
 
