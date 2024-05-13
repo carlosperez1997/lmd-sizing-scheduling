@@ -52,11 +52,12 @@ class Solver():
             self.A[r] = [ self.i.area_map[a] for a in self.i.region_area_map[r] ]
 
         # Set of all shifts available
-        # TODO: Shifts are regional level
+        # TODO: Shifts are regional level 
+        # Idea: Generate a unique identifier of shifts (start, end) that points to an index of shifts
         self.P = {}
         self.shifts = [s for s in range(self.i.n_shifts)]
         for r in self.R:
-            self.P[r] = self.shifts
+            self.P[r] = [int(k) for k, p in self.i.shifts_start[r].items()]
 
         # Periods
         self.Theta = [i for i in range(self.i.n_periods)]
