@@ -9,8 +9,8 @@ import json
 class Instance():
     def __init__(self, regions, areas, region_area_map, area_map, period_demands, period_couriers,
                  region_employees, min_hours_worked, max_hours_worked, max_unique_starts,
-                 shifts_start, shifts_end,
-                 outsourcing_cost_multiplier=1.5, n_periods = 8, n_days = 7, n_hours = 8):
+                 shifts_start, shifts_end, n_scenarios,
+                 outsourcing_cost_multiplier=1.5, n_periods = 8, n_days = 7, n_hours = 8, cost_courier = 1):
         
         self.regions = regions
         self.areas = areas
@@ -21,7 +21,7 @@ class Instance():
         self.n_days = n_days
         self.n_hours = n_hours
 
-        self.cost_courier = 1
+        self.cost_courier = cost_courier
         self.cout = outsourcing_cost_multiplier
         self.period_demands = period_demands
         self.period_couriers = period_couriers
@@ -36,6 +36,8 @@ class Instance():
         self.shifts_start = shifts_start
         self.shifts_end = shifts_end
         self.n_shifts = max([len(shifts_start[s]) for s in shifts_start])
+
+        self.n_scenarios = n_scenarios
 
 
 class Solver():
@@ -52,8 +54,6 @@ class Solver():
             self.A[r] = [ self.i.area_map[a] for a in self.i.region_area_map[r] ]
 
         # Set of all shifts available
-        # TODO: Shifts are regional level 
-        # Idea: Generate a unique identifier of shifts (start, end) that points to an index of shifts
         self.P = {}
         self.shifts = [s for s in range(self.i.n_shifts)]
         for r in self.R:
@@ -64,6 +64,9 @@ class Solver():
 
         # Days
         self.D = [d for d in range(self.i.n_days)]
+        
+        # Scenarios
+        self.S = [s for s in range(self.i.n_scenarios)]
 
         # Hours in shift
         self.h = {}
@@ -71,16 +74,18 @@ class Solver():
             self.h[p] = self.i.n_hours
 
         # Number of deliveries to perform (n_{a theta d})
-        self.deliveries = np.zeros((self.i.n_areas, self.i.n_periods, self.i.n_days))
+        self.deliveries = np.zeros((self.i.n_areas, self.i.n_periods, self.i.n_days, self.i.n_scenarios))
         for i, a in enumerate(self.i.areas):
             for k, d in enumerate(self.D):
-                self.deliveries[i, :, k] = self.i.period_demands[(a, d)]
+                for l, s in enumerate(self.S):
+                    self.deliveries[i, :, k, s] = self.i.period_demands[(a, d, s)]
 
-        # Number of couriers needed (m_{a theta d})
-        self.couriers_needed = np.zeros((self.i.n_areas, self.i.n_periods, self.i.n_days))
+        # Number of couriers needed (m_{a theta d, s})
+        self.couriers_needed = np.zeros((self.i.n_areas, self.i.n_periods, self.i.n_days, self.i.n_scenarios))
         for i, a in enumerate(self.i.areas):
             for k, d in enumerate(self.D):
-                self.couriers_needed[i, :, k] = self.i.period_couriers[(a, d)]
+                for l, s in enumerate(self.S):
+                    self.couriers_needed[i, :, k, s] = self.i.period_couriers[(a, d, s)]
 
         # Cost of employed courier (c_{a theta d})
         self.cost_couriers = np.zeros((self.i.n_areas, self.i.n_periods, self.i.n_days))
@@ -127,7 +132,7 @@ class Solver():
         self.u_var = self.m.addVars(self.i.n_employees, self.i.n_shifts, vtype=GRB.BINARY, name='u')
 
         # Outsourcing costs: omega_{a theta d}
-        self.omega_var = self.m.addVars(self.i.n_areas, self.i.n_periods, self.i.n_days, vtype=GRB.CONTINUOUS, lb=0, name='omega')
+        self.omega_var = self.m.addVars(self.i.n_areas, self.i.n_periods, self.i.n_days, self.i.n_scenarios, vtype=GRB.CONTINUOUS, lb=0, name='omega')
 
         # mega_value
         M = 999_999
@@ -228,21 +233,22 @@ class Solver():
             for a in self.A[r]:
                 for theta in self.Theta:
                     for d in self.D:
-                        if self.couriers_needed[a,theta,d] > 0:
-                            factor = self.deliveries[a, theta, d] / self.couriers_needed[a, theta, d] * self.i.cout 
-                        else:
-                            factor = 0
-                        self.m.addConstr(
-                            ((self.couriers_needed[a, theta, d] - sum([self.k_var[e, a, theta, d] for e in self.E[r]])) * factor <= self.omega_var[a, theta, d]),
-                            name = f'outsource_{r}_{a}_{theta}_{d}'   
-                        )
+                        for s in self.S:
+                            if self.couriers_needed[a,theta,d,s] > 0:
+                                factor = self.deliveries[a, theta, d, s] / self.couriers_needed[a, theta, d, s] * self.i.cout 
+                            else:
+                                factor = 0
+                            self.m.addConstr(
+                                ((self.couriers_needed[a, theta, d, s] - sum([self.k_var[e, a, theta, d] for e in self.E[r]])) * factor <= self.omega_var[a, theta, d, s]),
+                                name = f'outsource_{r}_{a}_{theta}_{d}_{s}'   
+                            )
 
         # OBJECTIVE FUNCTION
         self.m.setObjective(
             sum([
                 sum([self.cost_couriers[a, theta, d] * self.k_var[e, a, theta, d] for e in self.E[r]]) 
-                    + self.omega_var[a, theta, d]
-            for r in self.R for a in self.A[r] for theta in self.Theta for d in self.D] #+ n_employees
+                    + 1 / self.i.n_scenarios * sum([self.omega_var[a, theta, d, s] for s in self.S])
+            for r in self.R for a in self.A[r] for theta in self.Theta for d in self.D]
             )
         )
 
@@ -261,21 +267,21 @@ class Solver():
         
         # Determine feasibility based on the optimization status
         if self.m.status == GRB.Status.INFEASIBLE:
-            obj_value, hiring, outsourcing = np.nan, np.nan, np.nan
+            obj_value, hiring_costs, outsourcing_costs = np.nan, np.nan, np.nan
         else:
+            # Hiring costs
+            hiring_costs = sum([ sum([self.cost_couriers[a, theta, d] * self.k_var[e, a, theta, d].X for e in self.E[r]]) 
+                        for r in self.R for a in self.A[r] for theta in self.Theta for d in self.D])
 
-            hiring = sum([ sum([self.cost_couriers[a, theta, d] * self.k_var[e, a, theta, d].X for e in self.E[r]]) 
-            for r in self.R for a in self.A[r] for theta in self.Theta for d in self.D])
-        
-            outsourcing = sum([self.omega_var[a, theta, d].X for r in self.R for a in self.A[r] for theta in self.Theta for d in self.D])
+            # Outsourcing
             obj_value = self.m.ObjVal
-            
+            outsourcing_costs = obj_value - hiring_costs
 
-
-        return {'regions': self.i.regions, 'n_employees': self.i.n_employees, 'obj_value': obj_value, 
-                'lower_bound' : self.m.objbound, 
+        return {'regions': self.i.regions, 'global_employees': self.i.n_employees, 'region_employees': self.i.region_employees,
+                'obj_value': obj_value, 
+                'gap' : self.m.MIPGap,
                 'elapsed_time': self.m.Runtime, 'status': self.m.status,
-                'hiring_costs': hiring, 'outsourcing_costs': outsourcing, 'exec_time': self.exec_time,
+                'hiring_costs': hiring_costs, 'outsourcing_costs': outsourcing_costs, 'exec_time': self.exec_time,
                 'n_variables': self.m.NumVars, 'n_constraints': self.m.NumConstrs, 'n_nonzeroes': self.m.NumNZs}
 
         
