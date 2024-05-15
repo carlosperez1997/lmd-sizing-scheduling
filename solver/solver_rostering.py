@@ -442,14 +442,24 @@ class Solver:
         ), name = 'max_different_start2')
 
         #constraint - demand can be met by outsourcing
-        self.m.addConstrs((
-            self.omega[(scenario, area, theta, day)] >= (self.i.srequired[(scenario, area, theta, day)] - sum(self.k[(employee, area, theta, day)] for employee in self.i.employees[region]))*(self.i.sdemand[(scenario, area, theta, day)/self.i.srequired[(scenario, area, theta, day)]])*(self.i.outsourcing_cost)
-            for region in self.i.regions
-            for area in self.i.reg_areas[region]
-            for day in self.i.days
-            for theta in self.i.periods[day]
-            for scenario in self.i.scenarios[day]
-        ), name = 'outsourcing_demand')
+        self.m.addConstrs(
+            (
+                self.omega[(scenario, area, theta, day)] >= 
+                (self.i.srequired[(scenario, area, theta, day)] - 
+                sum(
+                    self.k[(employee, area, theta, day)] 
+                    for employee in self.i.employees[region]
+                )) * 
+                (self.i.sdemand[(scenario, area, theta, day)] / self.i.srequired[(scenario, area, theta, day)]) * 
+                self.i.outsourcing_cost
+                for region in self.i.regions
+                for area in self.i.reg_areas[region]
+                for day in self.i.days
+                for theta in self.i.periods[day]
+                for scenario in self.i.scenarios[day]
+            ), name='outsourcing_demand'
+        )
+
 
         print("+constraints finished")
 
