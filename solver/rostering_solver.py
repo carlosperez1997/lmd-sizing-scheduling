@@ -80,7 +80,7 @@ class Solver():
                 for l, s in enumerate(self.S):
                     self.deliveries[i, :, k, s] = self.i.period_demands[(a, d, s)]
 
-        # Number of couriers needed (m_{a theta d, s})
+        # Number of couriers needed (m_{a theta d s})
         self.couriers_needed = np.zeros((self.i.n_areas, self.i.n_periods, self.i.n_days, self.i.n_scenarios))
         for i, a in enumerate(self.i.areas):
             for k, d in enumerate(self.D):
@@ -256,7 +256,7 @@ class Solver():
         self.m.setParam('TimeLimit', time_limit)
         self.m.ModelSense = GRB.MINIMIZE
         
-        # SOLVE
+        # selfVE
         start_time = time.time()
         self.m.optimize()
 
@@ -268,6 +268,7 @@ class Solver():
         # Determine feasibility based on the optimization status
         if self.m.status == GRB.Status.INFEASIBLE:
             obj_value, hiring_costs, outsourcing_costs = np.nan, np.nan, np.nan
+            summary = []
         else:
             # Hiring costs
             hiring_costs = sum([ sum([self.cost_couriers[a, theta, d] * self.k_var[e, a, theta, d].X for e in self.E[r]]) 
@@ -277,9 +278,57 @@ class Solver():
             obj_value = self.m.ObjVal
             outsourcing_costs = obj_value - hiring_costs
 
+
+            summary = []
+            for area in self.i.areas:
+                a = self.i.area_map[area]
+
+                for d in self.D:
+                    for theta in self.Theta:
+                        tot_hired = sum([self.k_var[e, a, theta, d].X for e in self.employees])
+                        
+                        scenarios_with_demand = [s for s in self.S if self.couriers_needed[a, theta, d, s] > 0]
+
+                        demand = sum([ self.deliveries[a, theta, d, s] for s in scenarios_with_demand ])
+                        
+                        if len(scenarios_with_demand) == 0:
+                            summary.append({'area': area, 'd': d, 'period': theta, 'hired': tot_hired, 
+                                'outsourced': 0, 'outsourcing_pct': 0, 'inhouse_pct': 0})
+                            continue
+
+                        tot_outsourced = sum(
+                            (self.couriers_needed[a, theta, d, s] - tot_hired ) * \
+                                self.deliveries[a, theta, d, s] / self.couriers_needed[a, theta, d, s] \
+                                    for s in scenarios_with_demand
+                        )
+
+                        tot_outsourced_pct = sum(
+                            100 * (self.couriers_needed[a, theta, d, s] - tot_hired) / self.couriers_needed[a, theta, d, s] \
+                                for s in scenarios_with_demand
+                        ) 
+
+                        tot_inhouse = sum(
+                            self.deliveries[a, theta, d, s] * tot_hired / self.couriers_needed[a, theta, d, s] \
+                                for s in scenarios_with_demand
+                        )
+
+                        # If we hire more couriers than we need, we don't outsource a negative amount,
+                        # we outsource zero.
+                        tot_outsourced = max(tot_outsourced, 0)
+                        tot_outsourced_pct = max(tot_outsourced_pct, 0)
+
+                        avg_outsourced = tot_outsourced / len(scenarios_with_demand)
+                        avg_outsourced_pct = tot_outsourced_pct / len(scenarios_with_demand)
+                        avg_inhouse = tot_inhouse / len(scenarios_with_demand)
+                        avg_demand = demand / len(scenarios_with_demand)
+
+                        #print(f'area{a} day {d} - period {theta} ::  Hired: {tot_hired} - Outsourced: {avg_outsourced} - Outsourcing pct: {avg_outsourced_pct} - Inhouse pct: {avg_inhouse}')
+
+                        summary.append({'area': area, 'd': d, 'period': theta, 'avg_demand': avg_demand, 'hired': tot_hired, 
+                                        'outsourced': avg_outsourced, 'outsourcing_pct': avg_outsourced_pct, 'inhouse_pct': avg_inhouse})
+
         return {'regions': self.i.regions, 'global_employees': self.i.n_employees, 'region_employees': self.i.region_employees,
-                'obj_value': obj_value, 
-                'gap' : self.m.MIPGap,
+                'obj_value': obj_value, 'gap' : self.m.MIPGap, 'area_results': summary,
                 'elapsed_time': self.m.Runtime, 'status': self.m.status,
                 'hiring_costs': hiring_costs, 'outsourcing_costs': outsourcing_costs, 'exec_time': self.exec_time,
                 'n_variables': self.m.NumVars, 'n_constraints': self.m.NumConstrs, 'n_nonzeroes': self.m.NumNZs}
