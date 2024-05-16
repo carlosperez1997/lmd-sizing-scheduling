@@ -252,11 +252,11 @@ class Solver():
             )
         )
 
-        #self.m.setParam('OutputFlag', 0) # No logs 
+        self.m.setParam('OutputFlag', 0) # No logs 
         self.m.setParam('TimeLimit', time_limit)
         self.m.ModelSense = GRB.MINIMIZE
         
-        # selfVE
+        # SOLVE
         start_time = time.time()
         self.m.optimize()
 
@@ -293,7 +293,7 @@ class Solver():
                         
                         if len(scenarios_with_demand) == 0:
                             summary.append({'area': area, 'd': d, 'period': theta, 'hired': tot_hired, 
-                                'outsourced': 0, 'outsourcing_pct': 0, 'inhouse_pct': 0})
+                                'outsourced': 0, 'outsourcing_pct': 0, 'inhouse': 0})
                             continue
 
                         tot_outsourced = sum(
@@ -325,7 +325,7 @@ class Solver():
                         #print(f'area{a} day {d} - period {theta} ::  Hired: {tot_hired} - Outsourced: {avg_outsourced} - Outsourcing pct: {avg_outsourced_pct} - Inhouse pct: {avg_inhouse}')
 
                         summary.append({'area': area, 'd': d, 'period': theta, 'avg_demand': avg_demand, 'hired': tot_hired, 
-                                        'outsourced': avg_outsourced, 'outsourcing_pct': avg_outsourced_pct, 'inhouse_pct': avg_inhouse})
+                                        'outsourced': avg_outsourced, 'outsourcing_pct': avg_outsourced_pct, 'inhouse': avg_inhouse})
 
         return {'regions': self.i.regions, 'global_employees': self.i.n_employees, 'region_employees': self.i.region_employees,
                 'obj_value': obj_value, 'gap' : self.m.MIPGap, 'area_results': summary,
