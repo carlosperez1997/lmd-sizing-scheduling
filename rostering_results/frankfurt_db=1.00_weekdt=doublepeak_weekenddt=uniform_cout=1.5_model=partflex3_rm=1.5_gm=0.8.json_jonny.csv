@@ -1,0 +1,3 @@
+instance,model,shift_type,week_demand_type,weekend_demand_type,obj_value,elapsed_time,n_variables,n_constraints,n_nonzeroes
+rostering_instances/frankfurt_db=1.00_weekdt=doublepeak_weekenddt=uniform_cout=1.5_model=partflex3_rm=1.5_gm=0.8.json,baseline,partflex3,doublepeak,uniform,3491.258333333816,0.139862060546875,64512,56812,106326
+rostering_instances/frankfurt_db=1.00_weekdt=doublepeak_weekenddt=uniform_cout=1.5_model=partflex3_rm=1.5_gm=0.8.json,roster,partflex3,doublepeak,uniform,4943.000000000996,0.4762551784515381,65792,58287,121361

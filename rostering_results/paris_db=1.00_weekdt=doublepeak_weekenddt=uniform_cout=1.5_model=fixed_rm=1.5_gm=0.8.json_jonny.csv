@@ -1,0 +1,3 @@
+instance,model,shift_type,week_demand_type,weekend_demand_type,obj_value,elapsed_time,n_variables,n_constraints,n_nonzeroes
+rostering_instances/paris_db=1.00_weekdt=doublepeak_weekenddt=uniform_cout=1.5_model=fixed_rm=1.5_gm=0.8.json,baseline,fixed,doublepeak,uniform,19960.680968891797,0.11982297897338867,40320,35980,79346
+rostering_instances/paris_db=1.00_weekdt=doublepeak_weekenddt=uniform_cout=1.5_model=fixed_rm=1.5_gm=0.8.json,roster,fixed,doublepeak,uniform,20846.517648739726,0.21116995811462402,41600,37460,90986

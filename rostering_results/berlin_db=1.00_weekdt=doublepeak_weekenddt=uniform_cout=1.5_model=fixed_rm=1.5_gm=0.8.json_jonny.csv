@@ -1,0 +1,3 @@
+instance,model,shift_type,week_demand_type,weekend_demand_type,obj_value,elapsed_time,n_variables,n_constraints,n_nonzeroes
+rostering_instances/berlin_db=1.00_weekdt=doublepeak_weekenddt=uniform_cout=1.5_model=fixed_rm=1.5_gm=0.8.json,baseline,fixed,doublepeak,uniform,7572.141666669687,0.27182984352111816,118944,103684,196440
+rostering_instances/berlin_db=1.00_weekdt=doublepeak_weekenddt=uniform_cout=1.5_model=fixed_rm=1.5_gm=0.8.json,roster,fixed,doublepeak,uniform,8370.116666669423,0.4853329658508301,120224,105164,219000
