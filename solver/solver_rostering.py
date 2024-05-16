@@ -389,16 +389,16 @@ class Solver:
                 for day in self.i.days
         ), name = 'one_shift_a_day')
 
-        #constraint - ensuring employee will have at least one rest day a week
-        self.m.addConstrs((
-            sum(self.r[(employee, shift_start, day)]
-                for day in self.i.days
-                for shift_start in self.i.shifts[region, day]
-                )
-            <= 6
-                for region in self.i.regions
-                for employee in self.i.employees[region]
-        ), name = 'one_rest_day_per_week')
+        # #constraint - ensuring employee will have at least one rest day a week
+        # self.m.addConstrs((
+        #     sum(self.r[(employee, shift_start, day)]
+        #         for day in self.i.days
+        #         for shift_start in self.i.shifts[region, day]
+        #         )
+        #     <= 6
+        #         for region in self.i.regions
+        #         for employee in self.i.employees[region]
+        # ), name = 'one_rest_day_per_week')
 
         #constraint - ensuring employees work a minimum number of hours
         self.m.addConstrs((
@@ -459,6 +459,14 @@ class Solver:
                 for scenario in self.i.scenarios[day]
             ), name='outsourcing_demand'
         )
+
+        self.m.addConstrs((
+            self.i.srequired[s, a, theta] * self.omega[a, theta, s] >= \
+            (self.i.srequired[s, a, theta] - self.x[a, theta]) * self.i.sdemand[s, a, theta] * self.i.outsourcing_cost
+            for a in self.i.areas
+            for theta in self.i.periods
+            for s in self.i.scenarios
+        ), name='set_omega')
 
 
         print("+constraints finished")
