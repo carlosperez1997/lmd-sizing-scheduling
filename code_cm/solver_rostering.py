@@ -18,6 +18,7 @@ EPS = 1e-6
 
 #NEW
 HOURS_IN_SHIFT_P = 8
+N_DAYS = 7
 
 class Instance:
     #arguments input to solver
@@ -111,7 +112,9 @@ class Instance:
             self.glb_multiplier = kwargs['global_multiplier']
 
             self.model = kwargs['model']
-            self.n_days = kwargs['n_days']
+            self.h_min = kwargs['h_min']
+            self.h_max = kwargs['h_max']
+            self.b_max = kwargs['max_n_diff']
         else:
             self.instance_file_weekday = self.args.instance_file_weekday
             self.shift_file_weekday = self.args.shift_file_weekday
@@ -124,21 +127,24 @@ class Instance:
             self.glb_multiplier = self.args.global_multiplier
 
             self.model = self.args.model
-            self.n_days = self.args.n_days
+            self.h_min = self.args.h_min
+            self.h_max = self.args.h_max
+            self.b_max = self.args.max_n_diff
+
+        if self.model == 'partflex':
+            if self.args is None:
+                self.max_n_shifts = kwargs['max_n_shifts']
+            else:
+                self.max_n_shifts = self.args.max_n_shifts
 
         #load json instance_file dictionary
         self.i_weekday = self.__load_instance(self.instance_file_weekday)
         self.j_weekday = self.__load_shift(self.shift_file_weekday)
         self.i_weekend = self.__load_instance(self.instance_file_weekend)
         self.j_weekend = self.__load_shift(self.shift_file_weekend)
-        # self.k = self.__load_workforce(self.workforce_file)
-        # self.k = self.workforce_dict
-
-        print("-initialization finished")
 
         #initialize the rest of the class arguments
         self.__compute_data(**kwargs)
-        print("-compute data finished")
 
     #initialize the other variables
     def __compute_data(self, **kwargs) -> None:
@@ -159,7 +165,7 @@ class Instance:
             area: [region for region in self.regions if area in self.reg_areas[region]][0] for area in self.areas
         }
 
-        #initialize k here
+        #initialize workforce dictionary
         self.k = dict()
         for region in self.regions:
             self.k[region] = self.workforce_dict[region]
@@ -182,6 +188,7 @@ class Instance:
         #day level variables
 
         #day
+        self.n_days = N_DAYS
         self.days = [iter_ for iter_ in range(self.n_days)]
 
         #periods (day)
@@ -267,20 +274,13 @@ class Instance:
                         self.shifts[region,day] = []
             self.shifts_distinct[region] = list(set(self.shifts_distinct[region]))
 
-        self.h_min = 32
-        self.h_max = 48
-        self.b_max = 2
+        ibasename = splitext(basename(self.instance_file_weekday))[0]
+        ibasename_list = ibasename.split('_')
+        self.ibasename = f"{ibasename_list[0]}_{ibasename_list[1]}"
+        self.name = self.ibasename + f"_oc={self.outsourcing_cost_multiplier}_model{self.model}"
 
         if self.model == 'partflex':
-            if self.args is None:
-                self.max_n_shifts = kwargs['max_n_shifts']
-            else:
-                self.max_n_shifts = self.args.max_n_shifts
-
-        self.ibasename = splitext(basename(self.instance_file_weekday))[0]
-        self.name = self.ibasename + f"_oc={self.outsourcing_cost_multiplier}_rm={self.reg_multiplier}_gm={self.glb_multiplier}"
-
-        print(self.area_regs)
+            self.name = self.ibasename + f"_oc={self.outsourcing_cost_multiplier}_model{self.model}_mu{self.max_n_shifts}"
 
     def __load_instance(self, instance_file: str) -> dict:
         with open(instance_file) as f:
@@ -349,8 +349,6 @@ class Solver:
                     for scenario in self.i.scenarios[day] 
                     for area in self.i.areas 
                     for theta in self.i.periods[day]}
-
-        print("+decision variables finished")
 
         # constraint - connecting employees moving areas (r and k decision variables) #UPDATE
         self.m.addConstrs((
@@ -444,14 +442,13 @@ class Solver:
         #constraint - demand can be met by outsourcing
         self.m.addConstrs(
             (
-                self.omega[(scenario, area, theta, day)] >= 
+                self.i.srequired[(scenario, area, theta, day)] * self.omega[(scenario, area, theta, day)] >= \
                 (self.i.srequired[(scenario, area, theta, day)] - 
                 sum(
                     self.k[(employee, area, theta, day)] 
                     for employee in self.i.employees[region]
-                )) * 
-                (self.i.sdemand[(scenario, area, theta, day)] / self.i.srequired[(scenario, area, theta, day)]) * 
-                self.i.outsourcing_cost
+                )) * self.i.sdemand[(scenario, area, theta, day)] * self.i.outsourcing_cost
+                
                 for region in self.i.regions
                 for area in self.i.reg_areas[region]
                 for day in self.i.days
@@ -460,30 +457,20 @@ class Solver:
             ), name='outsourcing_demand'
         )
 
-        self.m.addConstrs((
-            self.i.srequired[s, a, theta] * self.omega[a, theta, s] >= \
-            (self.i.srequired[s, a, theta] - self.x[a, theta]) * self.i.sdemand[s, a, theta] * self.i.outsourcing_cost
-            for a in self.i.areas
-            for theta in self.i.periods
-            for s in self.i.scenarios
-        ), name='set_omega')
-
-
-        print("+constraints finished")
-
     def __basic_output(self) -> dict:
         output = {
             'instance': [self.i.ibasename],
-            'model': [self.args.model],
             'city': [self.i.ibasename.split('_')[0]],
-            'demand_baseline': [self.i.i['demand_baseline']],
-            'demand_type': [self.i.i['demand_type']],
+            'demand_baseline': [self.i.i_weekday['demand_baseline']],
             'outsourcing_cost_multiplier': [self.args.outsourcing_cost_multiplier],
             'region_multiplier': [self.i.reg_multiplier],
             'global_multiplier': [self.i.glb_multiplier],
+            'model': [self.args.model],
         }
         if self.i.model == 'partflex':
             output['max_n_shifts'] = [self.i.max_n_shifts]
+        else:
+            output['max_n_shifts'] = [np.nan]
         return output
 
     def __roster_results(self) -> dict:
@@ -492,12 +479,17 @@ class Solver:
         total_employees = 0
         for region in self.i.regions:
             total_employees += self.i.n_employees[region]
-
-        basic_output['objective_value'] = [self.m.ObjVal]
         basic_output['workforce_size'] = [total_employees]
-        basic_output['hiring_costs'] = [total_employees]
-        basic_output['objective_value_post_hire'] = [self.m.ObjVal - total_employees]
+        basic_output['wage_costs'] = [total_employees]
 
+        #can only get optimal value if there was one
+        if self.m.Status == GRB.OPTIMAL:
+            basic_output['objective_value'] = [self.m.ObjVal]
+            basic_output['objective_value_post_wage'] = [self.m.ObjVal - total_employees]
+        else:
+            basic_output['objective_value'] = [np.nan]
+            basic_output['objective_value_post_wage'] = [np.nan]
+        
         return basic_output
 
     def __roster_output(self) -> dict:
@@ -516,7 +508,7 @@ class Solver:
         return self.__roster_output()
 
 #function call run execution
-def run_roster_solver_results(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, n_days, max_n_shifts=None, output=None):
+def run_roster_solver_results(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None):
     args = Namespace(
         model=model,
         instance_file_weekday=instance_file_weekday,
@@ -529,17 +521,15 @@ def run_roster_solver_results(model, instance_file_weekday, shift_file_weekday, 
         regional_multiplier=regional_multiplier,
         global_multiplier=global_multiplier,
 
-        n_days = n_days,
-        max_n_shifts=max_n_shifts,
-        output=output
+        h_min = h_min,
+        h_max = h_max,
+        max_n_diff = max_n_diff,
+        max_n_shifts=max_n_shifts
     )
-    print("args created")
 
     # Assuming Instance and Solver classes are defined above in this script
     i = Instance(args=args)
-    print("=i created")
     solver = Solver(args=args, i=i)
-    print("=solver created")
 
     roster_results = solver.solve_roster_results()
 
