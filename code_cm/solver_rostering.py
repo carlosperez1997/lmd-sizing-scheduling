@@ -254,7 +254,7 @@ class Instance:
         for region in self.regions:
             self.shifts_distinct[region] = []
             for day in self.days:
-                if day in [0,1,2,3,4,5]:
+                if day in [0,1,2,3,4]:
                     #weekday
                     if region in list(self.j_weekday.keys()):
                         self.n_shifts[region,day] = len(self.j_weekday[region]['shifts_start'].keys())
@@ -494,8 +494,40 @@ class Solver:
 
     def __roster_output(self) -> dict:
         basic_output = self.__roster_results()
+
+        check_output = {}
+        for key in basic_output.keys():
+            check_output[key] = basic_output[key]
+        check_output['region'] = []
+        check_output['employee'] = []
+        check_output['day'] = []
+        check_output['sum_r'] = []
+        check_output['sum_k'] = []
         #change this code here after testing
-        return basic_output
+        for region in self.i.regions:
+            for employee in self.i.employees[region]:
+                for day in self.i.days:
+                    sum_r = 0
+                    for shift_start in self.i.shifts[region, day]:
+                        if self.m.Status == GRB.OPTIMAL:
+                            sum_r += int(self.r[(employee, shift_start, day)].X)
+                    check_output['region'].append(region)
+                    check_output['employee'].append(employee)
+                    check_output['day'].append(day)
+                    check_output['sum_r'].append(sum_r)
+
+                    sum_k = 0
+                    for area in self.i.reg_areas[region]:
+                        for theta in self.i.periods:
+                            if self.m.Status == GRB.OPTIMAL:
+                                sum_k += int(self.k[(employee, area, theta, day)].X)
+                    check_output['sum_k'].append(sum_k)
+
+        len_ = len(check_output['region'])
+        for key in basic_output.keys():
+            check_output[key] = check_output[key]*len_
+
+        return check_output
 
     def solve_roster_results(self) -> dict:
         self.__build_roster_model()
@@ -527,7 +559,6 @@ def run_roster_solver_results(model, instance_file_weekday, shift_file_weekday, 
         max_n_shifts=max_n_shifts
     )
 
-    # Assuming Instance and Solver classes are defined above in this script
     i = Instance(args=args)
     solver = Solver(args=args, i=i)
 
@@ -536,28 +567,29 @@ def run_roster_solver_results(model, instance_file_weekday, shift_file_weekday, 
     return roster_results
 
 
-# def run_roster_solver_output(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, n_days, max_n_shifts=None, output=None):
-#     args = Namespace(
-#         model=model,
-#         instance_file_weekday=instance_file_weekday,
-#         shift_file_weekday = shift_file_weekday,
-#         instance_file_weekend=instance_file_weekend,
-#         shift_file_weekend = shift_file_weekend,
-#         workforce_dict = workforce_dict,
+def run_roster_solver_output(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None):
+    args = Namespace(
+        model=model,
+        instance_file_weekday=instance_file_weekday,
+        shift_file_weekday = shift_file_weekday,
+        instance_file_weekend=instance_file_weekend,
+        shift_file_weekend = shift_file_weekend,
+        workforce_dict = workforce_dict,
 
-#         outsourcing_cost_multiplier=outsourcing_cost_multiplier,
-#         regional_multiplier=regional_multiplier,
-#         global_multiplier=global_multiplier,
+        outsourcing_cost_multiplier=outsourcing_cost_multiplier,
+        regional_multiplier=regional_multiplier,
+        global_multiplier=global_multiplier,
 
-#         n_days = n_days,
-#         max_n_shifts=max_n_shifts,
-#         output=output
-#     )
+        h_min = h_min,
+        h_max = h_max,
+        max_n_diff = max_n_diff,
+        max_n_shifts=max_n_shifts
+    )
 
-#     # Assuming Instance and Solver classes are defined above in this script
-#     i = Instance(args=args)
-#     solver = Solver(args=args, i=i)
+    # Assuming Instance and Solver classes are defined above in this script
+    i = Instance(args=args)
+    solver = Solver(args=args, i=i)
 
-#     roster_results = solver.solve_roster_output()
+    roster_results = solver.solve_roster_output()
 
-#     return roster_results
+    return roster_results
