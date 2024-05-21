@@ -502,26 +502,32 @@ class Solver:
         check_output['employee'] = []
         check_output['day'] = []
         check_output['sum_r'] = []
-        check_output['sum_k'] = []
-        #change this code here after testing
+        check_output['shift_start'] = []
+        check_output['k_worked'] = []
+
         for region in self.i.regions:
             for employee in self.i.employees[region]:
                 for day in self.i.days:
                     sum_r = 0
+                    shift_start_ = 0
                     for shift_start in self.i.shifts[region, day]:
                         if self.m.Status == GRB.OPTIMAL:
                             sum_r += int(self.r[(employee, shift_start, day)].X)
+                            if int(self.r[(employee, shift_start, day)].X) > .9:
+                                shift_start_ = shift_start
                     check_output['region'].append(region)
                     check_output['employee'].append(employee)
                     check_output['day'].append(day)
                     check_output['sum_r'].append(sum_r)
+                    check_output['shift_start'].append(shift_start_)
 
-                    sum_k = 0
+                    k_worked = []
                     for area in self.i.reg_areas[region]:
                         for theta in self.i.periods:
                             if self.m.Status == GRB.OPTIMAL:
-                                sum_k += int(self.k[(employee, area, theta, day)].X)
-                    check_output['sum_k'].append(sum_k)
+                                if int(self.k[(employee, area, theta, day)].X) > .9:
+                                    k_worked.append(theta)
+                    check_output['k_worked'].append(k_worked)
 
         len_ = len(check_output['region'])
         for key in basic_output.keys():
