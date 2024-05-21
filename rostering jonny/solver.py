@@ -242,6 +242,7 @@ class Solver():
         return results
         
     def __build_base_model(self):
+
          # Assign employees to regions
         self.E = {}
         prev_start = 0
@@ -291,46 +292,48 @@ class Solver():
                 )
 
         ### CONSTRAINTS
-        # Employee can only be assigned to one area at a time 
-        for d in self.i.days:
-            for r in self.i.regions:
-                Ar = self.i.region_area_map[r]
-                self.m.addConstrs((
-                    sum(self.k_vars[d, r][e, a, theta] for a in Ar) <= 1
-                    for e in self.E[r]
-                    for theta in self.i.periods),
-                    name=f'employee_{r}_{d}_single_assignment'
-                )
+        # Employee can only be assigned to one area at a time - CHECKED
+        self.m.addConstrs((
+            sum(self.k_vars[d, r][e, a, theta] for a in self.i.region_area_map[r]) <= 1
+            for theta in self.i.periods
+            for r in self.i.regions
+            for e in self.E[r]
+            for d in self.i.days
+            ),
+            name=f'employee_single_assignment'
+        )
 
         # Employee can work max number of periods in a day
-        for d in self.i.days:
-            for r in self.i.regions:   
-                self.m.addConstrs((
-                    sum(self.k_vars[d, r][e, a, theta] for a in self.i.region_area_map[r] for theta in self.i.periods) <= self.i.shift_length
-                    for e in self.E[r]),
-                    name=f'employee_max_periods_{r}_{d}'
-                )
+        self.m.addConstrs((
+            sum(self.k_vars[d, r][e, a, theta] for a in self.i.region_area_map[r] for theta in self.i.periods) <= 1/2*self.i.shift_length
+            for r in self.i.regions
+            for e in self.E[r]
+            for d in self.i.days
+            ),
+            name=f'employee_max_periods'
+        )
 
         # Number assinged to area is the sum of the k_vars
-        for d in self.i.days:
-            for r in self.i.regions:
-                self.m.addConstrs((
-                    self.n_hired[d, r][a, theta] == sum(self.k_vars[d, r][e, a, theta] for e in self.E[r])
-                    for a in self.i.region_area_map[r]
-                    for theta in self.i.periods),
-                    name=f'employee_{r}_{d}_assignment'
-                )
+        self.m.addConstrs((
+            self.n_hired[d, r][a, theta] == sum(self.k_vars[d, r][e, a, theta] for e in self.E[r])
+            for r in self.i.regions
+            for a in self.i.region_area_map[r]
+            for theta in self.i.periods
+            for d in self.i.days
+            ),
+            name=f'employee_assignment'
+        )
     
-        # Outsourcing cost
-        for d in self.i.days: 
-            for r in self.i.regions:      
-                self.m.addConstrs((
-                            self.i.period_couriers[d, s, a, theta] * self.omega_vars[d,r][a, theta, s] >= \
-                            (self.i.period_couriers[d, s, a, theta] - self.n_hired[d, r][a, theta]) * self.i.period_demands[d, s, a, theta] * self.i.outsourcing_cost
-                            for a in self.i.region_area_map[r]
-                            for theta in self.i.periods
-                            for s in self.i.scenarios[d]
-                        ), name=f'set_omega_{d}')  
+        # Outsourcing cost    
+        self.m.addConstrs((
+                    self.i.period_couriers[d, s, a, theta] * self.omega_vars[d,r][a, theta, s] >= \
+                    (self.i.period_couriers[d, s, a, theta] - self.n_hired[d, r][a, theta]) * self.i.period_demands[d, s, a, theta] * self.i.outsourcing_cost
+                    for r in self.i.regions
+                    for a in self.i.region_area_map[r]
+                    for theta in self.i.periods
+                    for d in self.i.days
+                    for s in self.i.scenarios[d]
+                ), name=f'set_omega')  
 
     def __build_roster_model(self):
         self.__build_base_model()
@@ -357,54 +360,55 @@ class Solver():
                 name=f'shift_start_{r}'
             )
 
-        ### CONSTRAINTS
         # Ensure employees are assigned to shifts, not sporadic periods
-        for d in self.i.days:
-            for r in self.i.regions:
-                for s in self.i.shifts_start[d][r]:
-                    self.m.addConstrs((
-                        sum(self.k_vars[d, r][e, a, theta] for a in self.i.region_area_map[r] 
-                            for theta in range(s, s+4)) == \
-                        self.i.shift_length*self.r_vars[d, r][e, s]
-                        for e in self.E[r]),
-                        name=f'employee_{r}_{d}_shift_assignment'
-                    )   
+        self.m.addConstrs((
+            sum(self.k_vars[d, r][e, a, theta] for a in self.i.region_area_map[r] 
+                for theta in range(s, s+4)) == \
+            1/2*self.i.shift_length*self.r_vars[d, r][e, s]
+            for r in self.i.regions
+            for d in self.i.days
+            for e in self.E[r]
+            for s in self.i.shifts_start[d][r]
+            ),
+            name=f'employee_shift_assignment'
+        )   
     
         # Limit the number of working days for each employee
-        for r in self.i.regions:
-            self.m.addConstrs((
-                sum(self.r_vars[d, r][e, p] for d in self.i.days for p in self.i.periods) <= self.i.working_days
-                for e in self.E[r]),
-                name=f'employee_{r}_working_days'
-            )
+        self.m.addConstrs((
+            sum(self.r_vars[d, r][e, p] for d in self.i.days for p in self.i.periods) <= self.i.working_days
+            for r in self.i.regions
+            for e in self.E[r]),
+            name=f'employee_working_days'
+        )
 
         # Min/max hours worked per employee per week
-        for r in self.i.regions:
-            self.m.addConstrs((
-                sum(self.r_vars[d, r][e, p] for d in self.i.days for p in self.i.periods)*self.i.shift_length*2 >= self.i.min_hours_worked
-                for e in self.E[r]),
-                name=f'employee_{r}_min_hours'
-            )
-            self.m.addConstrs((
-                sum(self.r_vars[d, r][e, p] for d in self.i.days for p in self.i.periods)*self.i.shift_length*2 <= self.i.max_hours_worked
-                for e in self.E[r]),
-                name=f'employee_{r}_max_hours'
-            )
+        self.m.addConstrs((
+            sum(self.r_vars[d, r][e, p] for d in self.i.days for p in self.i.periods)*self.i.shift_length >= self.i.min_hours_worked
+            for r in self.i.regions
+            for e in self.E[r]),
+            name=f'employee_{r}_min_hours'
+        )
+        self.m.addConstrs((
+            sum(self.r_vars[d, r][e, p] for d in self.i.days for p in self.i.periods)*self.i.shift_length <= self.i.max_hours_worked
+            for r in self.i.regions
+            for e in self.E[r]),
+            name=f'employee_{r}_max_hours'
+        )
         
         # Link shift start indicator to start time count indicator
-        for d in self.i.days:
-            for r in self.i.regions:
-                self.m.addConstrs((
-                    self.r_vars[d, r][e, p] <= self.u_vars[r][e, p]  
-                    for e in self.E[r]
-                    for p in self.i.periods
-                ), name=f'max_unique_starts_{r}_{d}')
+        self.m.addConstrs((
+            self.r_vars[d, r][e, p] <= self.u_vars[r][e, p]  
+            for r in self.i.regions
+            for d in self.i.days
+            for e in self.E[r]
+            for p in self.i.periods
+        ), name=f'max_unique_starts_{r}_{d}')
         
         # Limit the number of unique shift starts
-        for r in self.i.regions:
-            self.m.addConstrs((
-                sum(self.u_vars[r][e, p] for p in self.i.periods) <= self.i.max_unique_starts
-                for e in self.E[r]),
-                name=f'max_unique_starts_{r}'
-            )
+        self.m.addConstrs((
+            sum(self.u_vars[r][e, p] for p in self.i.periods) <= self.i.max_unique_starts
+            for r in self.i.regions
+            for e in self.E[r]),
+            name=f'max_unique_starts_{r}'
+        )
 
