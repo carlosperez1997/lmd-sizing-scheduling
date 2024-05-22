@@ -350,20 +350,6 @@ class Solver:
                     for area in self.i.areas 
                     for theta in self.i.periods[day]}
 
-        # # constraint - connecting employees moving areas (r and k decision variables) #UPDATE
-        # self.m.addConstrs((
-        #     sum(
-        #         self.k[(employee, area, theta, day)]
-        #         for area in self.i.reg_areas[region]
-        #         for theta in range(shift_start, shift_start+4)
-        #     ) ==
-        #     (1/2)*HOURS_IN_SHIFT_P*self.r[(employee, shift_start, day)]
-        #     for region in self.i.regions
-        #     for employee in self.i.employees[region]
-        #     for day in self.i.days
-        #     for shift_start in self.i.shifts[region, day]
-        # ), name='connect_employees_moving_areas')
-
         # constraint - connecting employees moving areas (r and k decision variables) #UPDATE
         # UPDATE to capture all theta periods throughout the day
         self.m.addConstrs((
@@ -376,6 +362,20 @@ class Solver:
             for region in self.i.regions
             for employee in self.i.employees[region]
             for day in self.i.days
+        ), name='connect_employees_moving_areas_all')
+
+        # constraint - connecting employees moving areas (r and k decision variables) #UPDATE
+        self.m.addConstrs((
+            sum(
+                self.k[(employee, area, theta, day)]
+                for area in self.i.reg_areas[region]
+                for theta in range(shift_start, shift_start+4)
+            ) ==
+            (1/2)*HOURS_IN_SHIFT_P*self.r[(employee, shift_start, day)]
+            for region in self.i.regions
+            for employee in self.i.employees[region]
+            for day in self.i.days
+            for shift_start in self.i.shifts[region, day]
         ), name='connect_employees_moving_areas')
 
         #constraint - ensuring employee can be in only one area at a time
@@ -413,16 +413,16 @@ class Solver:
                 for day in self.i.days
         ), name = 'specific_periods_per_day')
 
-        # #constraint - ensuring employee will have at least one rest day a week
-        # self.m.addConstrs((
-        #     sum(self.r[(employee, shift_start, day)]
-        #         for day in self.i.days
-        #         for shift_start in self.i.shifts[region, day]
-        #         )
-        #     <= 6
-        #         for region in self.i.regions
-        #         for employee in self.i.employees[region]
-        # ), name = 'one_rest_day_per_week')
+        #constraint - ensuring employee will have at least one rest day a week
+        self.m.addConstrs((
+            sum(self.r[(employee, shift_start, day)]
+                for day in self.i.days
+                for shift_start in self.i.shifts[region, day]
+                )
+            <= 6
+                for region in self.i.regions
+                for employee in self.i.employees[region]
+        ), name = 'one_rest_day_per_week')
 
         #constraint - ensuring employees work a minimum number of hours
         self.m.addConstrs((
@@ -529,6 +529,7 @@ class Solver:
         check_output['day'] = []
         check_output['sum_r'] = []
         check_output['shift_start'] = []
+        check_output['sum_k'] = []
         check_output['k_worked'] = []
 
         for region in self.i.regions:
@@ -547,13 +548,26 @@ class Solver:
                     check_output['sum_r'].append(sum_r)
                     check_output['shift_start'].append(shift_start_)
 
+        for region in self.i.regions:
+            for employee in self.i.employees[region]:
+                for day in self.i.days:
+                    sum_k = 0
                     k_worked = []
-                    for area in self.i.reg_areas[region]:
-                        for theta in self.i.periods:
-                            if self.m.Status == GRB.OPTIMAL:
-                                if int(self.k[(employee, area, theta, day)].X) > .9:
-                                    k_worked.append(theta)
+                    for theta in self.i.periods[day]:
+                        if sum_r > 0:
+                            k = sum(
+                                self.k[(employee, area, theta, day)].X
+                                for area in self.i.reg_areas[region]
+                            )
+                        else:
+                            k = 0
+
+                        sum_k += k
+                        if k > .9:
+                            k_worked.append(theta)
+                    check_output['sum_k'].append(sum_k)
                     check_output['k_worked'].append(k_worked)
+                    check_output['k_worked'].sort()
 
         len_ = len(check_output['region'])
         for key in basic_output.keys():
@@ -569,7 +583,23 @@ class Solver:
     def solve_roster_output(self) -> dict:
         self.__build_roster_model()
         self.m.optimize()
-        return self.__roster_output()
+        return self.__roster_output(), self.compute_k_sums_by_period()
+
+    def compute_k_sums_by_period(self):
+        k_sum_by_period = {}
+        for region in self.i.regions:
+            for employee in self.i.employees[region]:
+                for day in self.i.days:
+                    thetas = []
+                    for theta in self.i.periods[day]:
+                        k = sum(
+                            self.k[(employee, area, theta, day)].X
+                            for area in self.i.reg_areas[region]
+                        )
+                        thetas.append(k)
+
+                    k_sum_by_period[(region, employee, day)] = thetas
+        return k_sum_by_period
 
 #function call run execution
 def run_roster_solver_results(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None):
@@ -622,6 +652,6 @@ def run_roster_solver_output(model, instance_file_weekday, shift_file_weekday, i
     i = Instance(args=args)
     solver = Solver(args=args, i=i)
 
-    roster_results = solver.solve_roster_output()
+    roster_results, jonny_results = solver.solve_roster_output()
 
-    return roster_results
+    return roster_results, jonny_results
