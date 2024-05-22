@@ -283,7 +283,7 @@ class Solver:
             return NotImplementedError('Shift length only implemented for n_periods == 8')
 
         #JC constraint updated
-        w_idx = range(self.i.n_periods - shift_len - 1) #changed from a -1 to a +1
+        w_idx = range(self.i.n_periods - shift_len + 1) #changed from a -1 to a +1
         self.w = self.m.addVars(w_idx, vtype=GRB.BINARY, name='w')
 
         self.m.addConstrs((
@@ -568,126 +568,126 @@ class Solver:
         self.m.optimize()
         return self.__flex_output()
 
-#function call run execution
-def run_solver_output(model, instance, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, max_n_shifts=None, output=None):
-    args = Namespace(
-        model=model,
-        instance=instance,
-        outsourcing_cost_multiplier=outsourcing_cost_multiplier,
-        regional_multiplier=regional_multiplier,
-        global_multiplier=global_multiplier,
-        max_n_shifts=max_n_shifts,
-        output=output
-    )
+# #function call run execution
+# def run_solver_output(model, instance, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, max_n_shifts=None, output=None):
+#     args = Namespace(
+#         model=model,
+#         instance=instance,
+#         outsourcing_cost_multiplier=outsourcing_cost_multiplier,
+#         regional_multiplier=regional_multiplier,
+#         global_multiplier=global_multiplier,
+#         max_n_shifts=max_n_shifts,
+#         output=output
+#     )
 
-    # Assuming Instance and Solver classes are defined above in this script
-    i = Instance(args=args)
-    solver = Solver(args=args, i=i)
+#     # Assuming Instance and Solver classes are defined above in this script
+#     i = Instance(args=args)
+#     solver = Solver(args=args, i=i)
 
-    def output_file(args, i):
-        if args.output is not None:
-            return args.output
-        elif args.model == 'fixed':
-            return f"../results/results_output/{i.name}_model=fixed.json"
-        elif args.model == 'partflex':
-            return f"../results/results_output/{i.name}_mu={str(args.max_n_shifts)}_model=partflex.json"
-        elif args.model == 'flex':
-            return f"../results/results_output/{i.name}_model=flex.json"
+#     def output_file(args, i):
+#         if args.output is not None:
+#             return args.output
+#         elif args.model == 'fixed':
+#             return f"../results/results_output/{i.name}_model=fixed.json"
+#         elif args.model == 'partflex':
+#             return f"../results/results_output/{i.name}_mu={str(args.max_n_shifts)}_model=partflex.json"
+#         elif args.model == 'flex':
+#             return f"../results/results_output/{i.name}_model=flex.json"
 
-    # Model execution logic
-    if args.model == 'fixed':
-        results = solver.solve_fixed_output()
-    elif args.model == 'partflex':
-        results = solver.solve_partflex_output()
-    elif args.model == 'flex':
-        results = solver.solve_flex_output()
-    else:
-        raise ValueError("Invalid model type provided")
+#     # Model execution logic
+#     if args.model == 'fixed':
+#         results = solver.solve_fixed_output()
+#     elif args.model == 'partflex':
+#         results = solver.solve_partflex_output()
+#     elif args.model == 'flex':
+#         results = solver.solve_flex_output()
+#     else:
+#         raise ValueError("Invalid model type provided")
 
-    # Save results
-    output_path = output_file(args, i)
-    with open(output_path, 'w') as f:
-        json.dump(results, f, indent=2)
-    print(f"Results saved to {output_path}")
+#     # Save results
+#     output_path = output_file(args, i)
+#     with open(output_path, 'w') as f:
+#         json.dump(results, f, indent=2)
+#     print(f"Results saved to {output_path}")
 
-#function call run execution
-def run_solver_shift(model, instance, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, max_n_shifts=None, output=None):
-    args = Namespace(
-        model=model,
-        instance=instance,
-        outsourcing_cost_multiplier=outsourcing_cost_multiplier,
-        regional_multiplier=regional_multiplier,
-        global_multiplier=global_multiplier,
-        max_n_shifts=max_n_shifts,
-        output=output
-    )
+# #function call run execution
+# def run_solver_shift(model, instance, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, max_n_shifts=None, output=None):
+#     args = Namespace(
+#         model=model,
+#         instance=instance,
+#         outsourcing_cost_multiplier=outsourcing_cost_multiplier,
+#         regional_multiplier=regional_multiplier,
+#         global_multiplier=global_multiplier,
+#         max_n_shifts=max_n_shifts,
+#         output=output
+#     )
 
-    # Assuming Instance and Solver classes are defined above in this script
-    i = Instance(args=args)
-    solver = Solver(args=args, i=i)
+#     # Assuming Instance and Solver classes are defined above in this script
+#     i = Instance(args=args)
+#     solver = Solver(args=args, i=i)
 
-    def output_file(args, i):
-        if args.output is not None:
-            return args.output
-        elif args.model == 'fixed':
-            return f"../shifts/{i.name}_model=fixed.json"
-        elif args.model == 'partflex':
-            return f"../shifts/{i.name}_mu={str(args.max_n_shifts)}_model=partflex.json"
-        elif args.model == 'flex':
-            return f"../shifts/{i.name}_model=flex.json"
+#     def output_file(args, i):
+#         if args.output is not None:
+#             return args.output
+#         elif args.model == 'fixed':
+#             return f"../shifts/{i.name}_model=fixed.json"
+#         elif args.model == 'partflex':
+#             return f"../shifts/{i.name}_mu={str(args.max_n_shifts)}_model=partflex.json"
+#         elif args.model == 'flex':
+#             return f"../shifts/{i.name}_model=flex.json"
 
-    # Model execution logic
-    if args.model == 'fixed':
-        results = solver.solve_fixed_output()
-    elif args.model == 'partflex':
-        results = solver.solve_partflex_output()
-    elif args.model == 'flex':
-        results = solver.solve_flex_output()
-    else:
-        raise ValueError("Invalid model type provided")
+#     # Model execution logic
+#     if args.model == 'fixed':
+#         results = solver.solve_fixed_output()
+#     elif args.model == 'partflex':
+#         results = solver.solve_partflex_output()
+#     elif args.model == 'flex':
+#         results = solver.solve_flex_output()
+#     else:
+#         raise ValueError("Invalid model type provided")
 
-    #change the results to be in the shape of shift information
-    if args.model == 'fixed':
-        #get the regions and make a dictionary
-        dict_shifts = {}
-        for region in i.regions:
-            dict_shifts[region] = {}
-            dict_shifts[region]['shifts_start'] = {0:0,1:4}
-            dict_shifts[region]['shifts_end'] = {0:4,1:8}
-    elif args.model == 'partflex':
-        df_ = pd.DataFrame(results)
-        df_.sort_values(by = ['region','theta'], inplace = True)
-        df_ = df_[df_['zminus__a_theta']==1]
-        df_.drop_duplicates(subset = ['region','theta'], inplace = True)
-        dict_shifts = {}
-        for region in list(df_['region']):
-            dict_shifts[region] = {}
-            dict_shifts[region]['shifts_start'] = {}
-            dict_shifts[region]['shifts_end'] = {}
-            for index_, start_theta in enumerate(df_[df_['region']==region]['theta'].tolist()):
-                dict_shifts[region]['shifts_start'][index_] = start_theta
-                dict_shifts[region]['shifts_end'][index_] = start_theta + 4
-    elif args.model == 'flex':
-        df_ = pd.DataFrame(results)
-        df_.sort_values(by = ['region','theta'], inplace = True)
-        df_ = df_[df_['zminus__a_theta']==1]
-        df_.drop_duplicates(subset = ['region','theta'], inplace = True)
-        dict_shifts = {}
-        for region in df_['region'].unique().tolist():
-            dict_shifts[region] = {}
-            dict_shifts[region]['shifts_start'] = {}
-            dict_shifts[region]['shifts_end'] = {}
-            for index_, start_theta in enumerate(df_[df_['region']==region]['theta'].tolist()):
-                dict_shifts[region]['shifts_start'][index_] = start_theta
-                dict_shifts[region]['shifts_end'][index_] = start_theta + 4
-    else:
-        raise ValueError("Invalid model type provided")
+#     #change the results to be in the shape of shift information
+#     if args.model == 'fixed':
+#         #get the regions and make a dictionary
+#         dict_shifts = {}
+#         for region in i.regions:
+#             dict_shifts[region] = {}
+#             dict_shifts[region]['shifts_start'] = {0:0,1:4}
+#             dict_shifts[region]['shifts_end'] = {0:4,1:8}
+#     elif args.model == 'partflex':
+#         df_ = pd.DataFrame(results)
+#         df_.sort_values(by = ['region','theta'], inplace = True)
+#         df_ = df_[df_['zminus__a_theta']==1]
+#         df_.drop_duplicates(subset = ['region','theta'], inplace = True)
+#         dict_shifts = {}
+#         for region in list(df_['region']):
+#             dict_shifts[region] = {}
+#             dict_shifts[region]['shifts_start'] = {}
+#             dict_shifts[region]['shifts_end'] = {}
+#             for index_, start_theta in enumerate(df_[df_['region']==region]['theta'].tolist()):
+#                 dict_shifts[region]['shifts_start'][index_] = start_theta
+#                 dict_shifts[region]['shifts_end'][index_] = start_theta + 4
+#     elif args.model == 'flex':
+#         df_ = pd.DataFrame(results)
+#         df_.sort_values(by = ['region','theta'], inplace = True)
+#         df_ = df_[df_['zminus__a_theta']==1]
+#         df_.drop_duplicates(subset = ['region','theta'], inplace = True)
+#         dict_shifts = {}
+#         for region in df_['region'].unique().tolist():
+#             dict_shifts[region] = {}
+#             dict_shifts[region]['shifts_start'] = {}
+#             dict_shifts[region]['shifts_end'] = {}
+#             for index_, start_theta in enumerate(df_[df_['region']==region]['theta'].tolist()):
+#                 dict_shifts[region]['shifts_start'][index_] = start_theta
+#                 dict_shifts[region]['shifts_end'][index_] = start_theta + 4
+#     else:
+#         raise ValueError("Invalid model type provided")
 
-    # Save results
-    output_path = output_file(args, i)
-    with open(output_path, 'w') as f:
-        json.dump(dict_shifts, f, indent=2)
-    print(f"Results saved to {output_path}")
+#     # Save results
+#     output_path = output_file(args, i)
+#     with open(output_path, 'w') as f:
+#         json.dump(dict_shifts, f, indent=2)
+#     print(f"Results saved to {output_path}")
 
 #function call run execution
 def run_solver_shift_return(model, instance, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, max_n_shifts=None, output=None):
@@ -739,7 +739,8 @@ def run_solver_shift_return(model, instance, outsourcing_cost_multiplier, region
         df_ = df_[df_['zminus__a_theta']==1]
         df_.drop_duplicates(subset = ['region','theta'], inplace = True)
         dict_shifts = {}
-        for region in list(df_['region']):
+        #this might not have been distinct
+        for region in df_['region'].unique().tolist():
             dict_shifts[region] = {}
             dict_shifts[region]['shifts_start'] = {}
             dict_shifts[region]['shifts_end'] = {}
@@ -762,7 +763,7 @@ def run_solver_shift_return(model, instance, outsourcing_cost_multiplier, region
     else:
         raise ValueError("Invalid model type provided")
     
-    return dict_shifts, i.n_regions
+    return dict_shifts, i.n_regions, results
 
 
 
