@@ -350,18 +350,32 @@ class Solver:
                     for area in self.i.areas 
                     for theta in self.i.periods[day]}
 
+        # # constraint - connecting employees moving areas (r and k decision variables) #UPDATE
+        # self.m.addConstrs((
+        #     sum(
+        #         self.k[(employee, area, theta, day)]
+        #         for area in self.i.reg_areas[region]
+        #         for theta in range(shift_start, shift_start+4)
+        #     ) ==
+        #     (1/2)*HOURS_IN_SHIFT_P*self.r[(employee, shift_start, day)]
+        #     for region in self.i.regions
+        #     for employee in self.i.employees[region]
+        #     for day in self.i.days
+        #     for shift_start in self.i.shifts[region, day]
+        # ), name='connect_employees_moving_areas')
+
         # constraint - connecting employees moving areas (r and k decision variables) #UPDATE
+        # UPDATE to capture all theta periods throughout the day
         self.m.addConstrs((
             sum(
                 self.k[(employee, area, theta, day)]
                 for area in self.i.reg_areas[region]
-                for theta in range(shift_start, shift_start+4)
+                for theta in self.i.periods[day]
             ) ==
-            (1/2)*HOURS_IN_SHIFT_P*self.r[(employee, shift_start, day)]
+            (1/2)*HOURS_IN_SHIFT_P*sum(self.r[(employee, shift_start, day)] for shift_start in self.i.shifts[region,day])
             for region in self.i.regions
             for employee in self.i.employees[region]
             for day in self.i.days
-            for shift_start in self.i.shifts[region, day]
         ), name='connect_employees_moving_areas')
 
         #constraint - ensuring employee can be in only one area at a time
@@ -386,6 +400,18 @@ class Solver:
                 for employee in self.i.employees[region]
                 for day in self.i.days
         ), name = 'one_shift_a_day')
+
+        #constraint - employee can't work more than number of periods available in a shift in a day
+        self.m.addConstrs((
+            sum(self.k[(employee, area, theta, day)]
+                for area in self.i.reg_areas[region]
+                for theta in self.i.periods[day]
+                )
+            <= (1/2)*HOURS_IN_SHIFT_P
+                for region in self.i.regions
+                for employee in self.i.employees[region]
+                for day in self.i.days
+        ), name = 'specific_periods_per_day')
 
         # #constraint - ensuring employee will have at least one rest day a week
         # self.m.addConstrs((
