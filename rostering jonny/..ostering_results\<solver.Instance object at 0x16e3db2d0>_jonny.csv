@@ -1,2 +1,0 @@
-instance,obj_value,elapsed_time,n_variables,n_constraints,n_nonzeroes
-rostering_instances/lyon_db=1.00_weekdt=doublepeak_weekenddt=uniform_cout=1.5_model=fixed_rm=1.5_gm=0.8.json,7032.120436507844,0.21610188484191895,33536,30516,72302

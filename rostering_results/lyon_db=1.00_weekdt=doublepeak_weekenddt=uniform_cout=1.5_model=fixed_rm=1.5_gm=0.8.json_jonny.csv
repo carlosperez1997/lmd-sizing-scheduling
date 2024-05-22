@@ -1,3 +1,0 @@
-instance,model,shift_type,week_demand_type,weekend_demand_type,obj_value,elapsed_time,n_variables,n_constraints,n_nonzeroes
-rostering_instances/lyon_db=1.00_weekdt=doublepeak_weekenddt=uniform_cout=1.5_model=fixed_rm=1.5_gm=0.8.json,baseline,fixed,doublepeak,uniform,6105.083412698416,0.09337186813354492,32256,29036,61782
-rostering_instances/lyon_db=1.00_weekdt=doublepeak_weekenddt=uniform_cout=1.5_model=fixed_rm=1.5_gm=0.8.json,roster,fixed,doublepeak,uniform,7032.120436507844,0.19466090202331543,33536,30516,72302

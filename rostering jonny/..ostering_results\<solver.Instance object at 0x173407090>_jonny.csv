@@ -1,2 +1,0 @@
-instance,obj_value,elapsed_time,n_variables,n_constraints,n_nonzeroes
-rostering_instances/berlin_db=1.00_weekdt=doublepeak_weekenddt=uniform_cout=1.5_model=fixed_rm=1.5_gm=0.8.json,8370.116666669423,0.5065908432006836,120224,105164,219000
