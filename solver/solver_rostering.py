@@ -9,7 +9,8 @@ import seaborn as sns
 import json
 import numpy as np
 import pandas as pd
-
+import re
+import math
 
 CAPACITY = 5
 COST_PER_COURIER_AND_PERIOD = 1.0
@@ -18,8 +19,8 @@ EPS = 1e-6
 
 #NEW
 HOURS_IN_SHIFT_P = 8
-N_WORK_DAYS = 6
 N_DAYS = 7
+N_WORK_DAYS = 6
 
 class Instance:
     #arguments input to solver
@@ -91,11 +92,16 @@ class Instance:
     name: str #model name
     ibasename: str #model name
     max_n_shifts = Optional[int] 
+
     instance_file_weekday: str #where all the information comes from
     shift_file_weekday: str #where region/shift information comes from
     instance_file_weekend: str #where all the information comes from
     shift_file_weekend: str #where region/shift information comes from
+
+    expand_workforce_to_regions = Optional[bool] #indicator to read in optiman workforce size
+    workforce_file: Optional[str]
     workforce_dict: dict
+    population: dict
 
     def __init__(self, args: Optional[Namespace], **kwargs):
         self.args = args
@@ -106,6 +112,8 @@ class Instance:
             self.shift_file_weekday = kwargs['shift_file_weekday']
             self.instance_file_weekend = kwargs['instance_file_weekend']
             self.shift_file_weekend = kwargs['shift_file_weekend']
+
+            self.expand_workforce_to_regions = kwargs['expand_workforce_to_regions']            
             self.workforce_dict = kwargs['workforce_dict']
 
             self.outsourcing_cost_multiplier = kwargs['outsourcing_cost_multiplier']
@@ -121,6 +129,8 @@ class Instance:
             self.shift_file_weekday = self.args.shift_file_weekday
             self.instance_file_weekend = self.args.instance_file_weekend
             self.shift_file_weekend = self.args.shift_file_weekend
+
+            self.expand_workforce_to_regions = self.args.expand_workforce_to_regions            
             self.workforce_dict = self.args.workforce_dict
 
             self.outsourcing_cost_multiplier = self.args.outsourcing_cost_multiplier
@@ -166,12 +176,42 @@ class Instance:
             area: [region for region in self.regions if area in self.reg_areas[region]][0] for area in self.areas
         }
 
-        #initialize workforce dictionary
-        self.k = dict()
-        for region in self.regions:
-            self.k[region] = self.workforce_dict[region]
-
         #region level variables
+
+        #workforce size dictionary (region dependent)
+        self.k = dict()
+
+        self.population = dict()
+        for region in self.regions:
+            self.population[region] = self.i_weekday['geography']['city']['regions'][region]['population']
+
+        #optimal workforce size already determined
+        if self.expand_workforce_to_regions == True:
+
+            #create workforce_file
+            city_pattern = r'(\w+)_db'
+            db_pattern = r'db=(\d+\.\d+)'
+
+            city_match = re.search(city_pattern, self.shift_file_weekday)
+            db_match = re.search(db_pattern, self.shift_file_weekday)
+
+            city = city_match.group(1) if city_match else None
+            demand_baseline = db_match.group(1) if db_match else None
+
+            self.workforce_file = f'../workforce_size/{city}_db={demand_baseline}.json'
+
+            #import in the optimal workforce size
+            workforce_size = self.__load_workforce(self.workforce_file)
+
+            #scale optimal workforce size to other regions
+            self.workforce_dict = {}
+            for region in self.regions:
+                self.workforce_dict[region] = math.floor(workforce_size*(self.population[region]/self.population[0]))
+                self.k[region] = math.floor(workforce_size*(self.population[region]/self.population[0]))
+        #searching for optimal workforce size
+        else:
+            for region in self.regions:
+                self.k[region] = self.workforce_dict[region]
 
         #employees (region) (employee index is distinct)
         counter_ = 0
@@ -303,6 +343,19 @@ class Instance:
         dict_shifts = df_shifts.set_index('region').to_dict(orient='index')
         return dict_shifts
 
+    def __load_workforce(self, workforce_file: str) -> int:
+        with open(workforce_file, 'r') as file:
+            data = json.load(file)
+            df_workforce = pd.DataFrame(data)
+        df_workforce = df_workforce[(df_workforce['outsourcing_cost_multiplier']==self.outsourcing_cost_multiplier)&(df_workforce['regional_multiplier']==self.reg_multiplier)&(df_workforce['global_multiplier']==self.glb_multiplier)]
+        #fixed or flex
+        if self.model in ['fixed','flex']:
+            df_workforce = df_workforce[df_workforce['model']==self.model]
+        #partflex
+        else:
+            df_workforce = df_workforce[(df_workforce['model']==self.model)&(df_workforce['max_n_shifts']==self.max_n_shifts)]
+        df_workforce.reset_index(drop = True, inplace=True)
+        return int(df_workforce['workforce_size_region0'].tolist()[0])
 
 class Solver:
     args: Namespace
@@ -508,13 +561,15 @@ class Solver:
         for region in self.i.regions:
             total_employees += self.i.n_employees[region]
         basic_output['workforce_size'] = [total_employees]
-        basic_output['wage_costs'] = [total_employees]
 
         #can only get optimal value if there was one
         if self.m.Status == GRB.OPTIMAL:
+            k = sum(self.k[(employee, area, theta, day)].X for region in self.i.regions for area in self.i.reg_areas[region] for employee in self.i.employees[region] for day in self.i.days for theta in self.i.periods[day])
+            basic_output['wage_costs'] = [k]
             basic_output['objective_value'] = [self.m.ObjVal]
-            basic_output['objective_value_post_wage'] = [self.m.ObjVal - total_employees]
+            basic_output['objective_value_post_wage'] = [self.m.ObjVal - k]
         else:
+            basic_output['wage_costs'] = [np.nan]
             basic_output['objective_value'] = [np.nan]
             basic_output['objective_value_post_wage'] = [np.nan]
         
@@ -594,13 +649,15 @@ class Solver:
         return self.__roster_output()
 
 #function call run execution
-def run_roster_solver_objval(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None):
+def run_roster_solver_objval(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None, expand_workforce_to_regions=None):
     args = Namespace(
         model=model,
         instance_file_weekday=instance_file_weekday,
         shift_file_weekday = shift_file_weekday,
         instance_file_weekend=instance_file_weekend,
         shift_file_weekend = shift_file_weekend,
+
+        expand_workforce_to_regions=expand_workforce_to_regions,
         workforce_dict = workforce_dict,
 
         outsourcing_cost_multiplier=outsourcing_cost_multiplier,
@@ -620,13 +677,15 @@ def run_roster_solver_objval(model, instance_file_weekday, shift_file_weekday, i
 
     return roster_results
 
-def run_roster_solver_objval_w_baseline(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None):
+def run_roster_solver_objval_w_baseline(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None, expand_workforce_to_regions=None):
     args = Namespace(
         model=model,
         instance_file_weekday=instance_file_weekday,
         shift_file_weekday = shift_file_weekday,
         instance_file_weekend=instance_file_weekend,
         shift_file_weekend = shift_file_weekend,
+
+        expand_workforce_to_regions=expand_workforce_to_regions,
         workforce_dict = workforce_dict,
 
         outsourcing_cost_multiplier=outsourcing_cost_multiplier,
@@ -647,13 +706,15 @@ def run_roster_solver_objval_w_baseline(model, instance_file_weekday, shift_file
 
     return baseline_results, roster_results
 
-def run_roster_solver_output(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None):
+def run_roster_solver_output(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None, expand_workforce_to_regions=None):
     args = Namespace(
         model=model,
         instance_file_weekday=instance_file_weekday,
         shift_file_weekday = shift_file_weekday,
         instance_file_weekend=instance_file_weekend,
         shift_file_weekend = shift_file_weekend,
+
+        expand_workforce_to_regions=expand_workforce_to_regions,
         workforce_dict = workforce_dict,
 
         outsourcing_cost_multiplier=outsourcing_cost_multiplier,
