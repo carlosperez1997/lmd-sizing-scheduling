@@ -173,6 +173,11 @@ class Instance:
 
         #region level variables
 
+        # population (region)
+        self.population = dict()
+        for region in self.regions:
+            self.population[region] = self.i_weekday['geography']['city']['regions'][region]['population']
+
         #employees (region) (employee index is distinct)
         counter_ = 0
         self.n_employees = dict()
