@@ -448,19 +448,19 @@ class Solver:
                 for employee in self.i.employees[region]
                 for shift_start in self.i.shifts_distinct[region]}
 
-        # constraint - ensuring employees work whole of shift
+        # constraint - connecting employees moving areas (r and k decision variables)
         self.m.addConstrs((
             sum(
                 self.k[(employee, area, theta, day)]
                 for area in self.i.reg_areas[region]
-            ) >=
-            self.r[(employee, shift_start, day)]
+                for theta in range(shift_start, shift_start+4)
+            ) ==
+            (1/2)*HOURS_IN_SHIFT_P*self.r[(employee, shift_start, day)]
             for region in self.i.regions
             for employee in self.i.employees[region]
             for day in self.i.days
             for shift_start in self.i.shifts[region, day]
-            for theta in range(shift_start, shift_start+4)
-        ), name='employees_work_whole_shift')
+        ), name='connect_employees_moving_areas_shift_theta')
 
         # constraint - connecting employees moving areas (r and k decision variables)
         self.m.addConstrs((
@@ -521,7 +521,7 @@ class Solver:
 
         #constraint - employees have a max number of different shift starting times
         self.m.addConstrs(
-            (self.r[(employee, shift_start, day)] <= self.U[(employee, shift_start)] 
+            (self.r[(employee, shift_start, day)] <= self.U[(employee, shift_start)] * 10000000000
                 for region in self.i.regions
                 for employee in self.i.employees[region]
                 for day in self.i.days
