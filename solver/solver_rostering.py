@@ -646,7 +646,7 @@ class Solver:
         self.__build_baseline_model()
         self.__build_roster_model()
         self.m.optimize()
-        return self.__roster_output()
+        return self #self.__roster_output()
 
 #function call run execution
 def run_roster_solver_objval(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None, expand_workforce_to_regions=None):
@@ -730,6 +730,8 @@ def run_roster_solver_output(model, instance_file_weekday, shift_file_weekday, i
     # Assuming Instance and Solver classes are defined above in this script
     i = Instance(args=args)
     solver = Solver(args=args, i=i)
+
+    return solver.solve_roster_output()
 
     roster_results, jonny_results = solver.solve_roster_output()
 
