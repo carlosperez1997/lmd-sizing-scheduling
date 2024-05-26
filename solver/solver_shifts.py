@@ -736,7 +736,7 @@ def run_solver_shift_return(model, instance, outsourcing_cost_multiplier, region
     elif args.model == 'partflex':
         df_ = pd.DataFrame(results)
         df_.sort_values(by = ['region','theta'], inplace = True)
-        df_ = df_[df_['zminus__a_theta']>1]
+        df_ = df_[df_['zminus__a_theta']>0]
         df_.drop_duplicates(subset = ['region','theta'], inplace = True)
         dict_shifts = {}
         #this might not have been distinct
