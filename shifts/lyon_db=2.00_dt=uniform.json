@@ -79,9 +79,49 @@
     "lyon_db=2.00_dt=uniform.json",
     "lyon_db=2.00_dt=uniform.json",
     "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
+    "lyon_db=2.00_dt=uniform.json",
     "lyon_db=2.00_dt=uniform.json"
   ],
   "city": [
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
     "lyon",
     "lyon",
     "lyon",
@@ -243,6 +283,26 @@
     2.0,
     2.0,
     2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
     2.0
   ],
   "demand_type": [
@@ -325,9 +385,33 @@
     "uniform",
     "uniform",
     "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
     "uniform"
   ],
   "model": [
+    "fixed",
+    "fixed",
+    "fixed",
+    "fixed",
     "flex",
     "flex",
     "flex",
@@ -344,6 +428,10 @@
     "partflex",
     "partflex",
     "partflex",
+    "fixed",
+    "fixed",
+    "fixed",
+    "fixed",
     "flex",
     "flex",
     "flex",
@@ -360,6 +448,10 @@
     "partflex",
     "partflex",
     "partflex",
+    "fixed",
+    "fixed",
+    "fixed",
+    "fixed",
     "flex",
     "flex",
     "flex",
@@ -376,6 +468,10 @@
     "partflex",
     "partflex",
     "partflex",
+    "fixed",
+    "fixed",
+    "fixed",
+    "fixed",
     "flex",
     "flex",
     "flex",
@@ -392,6 +488,10 @@
     "partflex",
     "partflex",
     "partflex",
+    "fixed",
+    "fixed",
+    "fixed",
+    "fixed",
     "flex",
     "flex",
     "flex",
@@ -414,18 +514,6 @@
     NaN,
     NaN,
     NaN,
-    2,
-    2,
-    2,
-    2,
-    3,
-    3,
-    3,
-    3,
-    4,
-    4,
-    4,
-    4,
     NaN,
     NaN,
     NaN,
@@ -446,18 +534,6 @@
     NaN,
     NaN,
     NaN,
-    2,
-    2,
-    2,
-    2,
-    3,
-    3,
-    3,
-    3,
-    4,
-    4,
-    4,
-    4,
     NaN,
     NaN,
     NaN,
@@ -474,6 +550,50 @@
     4,
     4,
     4,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    2,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3,
+    3,
+    4,
+    4,
+    4,
+    4,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    2,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3,
+    3,
+    4,
+    4,
+    4,
+    4,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
     NaN,
     NaN,
     NaN,
@@ -508,6 +628,14 @@
     1.2,
     1.2,
     1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
     1.5,
     1.5,
     1.5,
@@ -540,6 +668,10 @@
     1.8,
     1.8,
     1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
     2.0,
     2.0,
     2.0,
@@ -556,6 +688,14 @@
     2.0,
     2.0,
     2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
     2.5,
     2.5,
     2.5,
@@ -574,6 +714,26 @@
     2.5
   ],
   "regional_multiplier": [
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
     1.5,
     1.5,
     1.5,
@@ -735,9 +895,49 @@
     0.8,
     0.8,
     0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
     0.8
   ],
   "region": [
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
     0,
     1,
     2,
@@ -1139,9 +1339,169 @@
     {
       "0": 0,
       "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
     }
   ],
   "shifts_end": [
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
     {
       "0": 4,
       "1": 8
