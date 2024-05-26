@@ -1,0 +1,1826 @@
+{
+  "instance_file": [
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json",
+    "lyon_db=1.00_dt=uniform.json"
+  ],
+  "city": [
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon",
+    "lyon"
+  ],
+  "demand_baseline": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "demand_type": [
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform",
+    "uniform"
+  ],
+  "model": [
+    "fixed",
+    "fixed",
+    "fixed",
+    "fixed",
+    "flex",
+    "flex",
+    "flex",
+    "flex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "fixed",
+    "fixed",
+    "fixed",
+    "fixed",
+    "flex",
+    "flex",
+    "flex",
+    "flex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "fixed",
+    "fixed",
+    "fixed",
+    "fixed",
+    "flex",
+    "flex",
+    "flex",
+    "flex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "fixed",
+    "fixed",
+    "fixed",
+    "fixed",
+    "flex",
+    "flex",
+    "flex",
+    "flex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "fixed",
+    "fixed",
+    "fixed",
+    "fixed",
+    "flex",
+    "flex",
+    "flex",
+    "flex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex",
+    "partflex"
+  ],
+  "max_n_shifts": [
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    2,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3,
+    3,
+    4,
+    4,
+    4,
+    4,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    2,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3,
+    3,
+    4,
+    4,
+    4,
+    4,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    2,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3,
+    3,
+    4,
+    4,
+    4,
+    4,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    2,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3,
+    3,
+    4,
+    4,
+    4,
+    4,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    2,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3,
+    3,
+    4,
+    4,
+    4,
+    4
+  ],
+  "outsourcing_cost_multiplier": [
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5
+  ],
+  "regional_multiplier": [
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5
+  ],
+  "global_multiplier": [
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8
+  ],
+  "region": [
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3,
+    0,
+    1,
+    2,
+    3
+  ],
+  "shifts_start": [
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    },
+    {
+      "0": 0,
+      "1": 4
+    }
+  ],
+  "shifts_end": [
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    },
+    {
+      "0": 4,
+      "1": 8
+    }
+  ]
+}
