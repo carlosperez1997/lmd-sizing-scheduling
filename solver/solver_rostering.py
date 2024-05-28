@@ -631,6 +631,57 @@ class Solver:
 
         return check_output
 
+    def __roster_output(self):
+        #decision variables
+        #   k: tupledict #(e,a,theta,day)
+        k = {}
+        for key, value in self.k.items():
+            if value.X > 0:
+                k[key] = value.X
+
+        #   omega: tupledict #(s,a,theta,day)
+        omega = {}
+        for key, value in self.omega.items():
+            if value.X > 0:
+                omega[key] = value.X
+
+        #   r: tupledict #(e,p,day)
+        r = {}
+        for key, value in self.r.items():
+            if value.X > 0:
+                r[key] = value.X
+
+        #   U: tupledict #(e, p)
+        U = {}
+        for key, value in self.U.items():
+            if value.X > 0:
+                U[key] = value.X
+
+        results = {
+            # Instance
+            'regions': self.i.regions,
+            'reg_areas': self.i.reg_areas,
+            'shifts': self.i.shifts,
+            'days': self.i.days,
+            'employees': self.i.employees,
+            'area': self.i.reg_areas,
+            'periods': self.i.periods,
+            'hmax': self.i.h_max,
+            'hmin': self.i.h_min,
+            # Model output
+            'obj_val': self.m.ObjVal, 
+            'status': self.m.status, 
+            'gap': self.m.MIPGap,
+            # Decision vars
+            'k': k, 
+            'omega': omega, 
+            'r': r, 
+            'U': U,
+        }
+
+        return results
+
+
     def solve_roster_objval(self) -> dict:
         self.__build_baseline_model()
         self.__build_roster_model()
@@ -680,7 +731,12 @@ def run_roster_solver_objval(model, instance_file_weekday, shift_file_weekday, i
 
     return roster_results
 
-def run_roster_solver_objval_w_baseline(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None, expand_workforce_to_regions=None):
+def run_roster_solver_objval_w_baseline(model, instance_file_weekday, 
+                                        shift_file_weekday, instance_file_weekend, 
+                                        shift_file_weekend, workforce_dict, 
+                                        outsourcing_cost_multiplier, regional_multiplier, global_multiplier, 
+                                        h_min, h_max, max_n_diff, 
+                                        max_n_shifts=None, expand_workforce_to_regions=None):
     args = Namespace(
         model=model,
         instance_file_weekday=instance_file_weekday,
@@ -705,7 +761,7 @@ def run_roster_solver_objval_w_baseline(model, instance_file_weekday, shift_file
     solver = Solver(args=args, i=i)
 
     baseline_results = solver.solve_baseline_objval()
-    roster_results = solver.solve_roster_objval()
+    roster_results = solver.solve_roster_output()
 
     return baseline_results, roster_results
 
