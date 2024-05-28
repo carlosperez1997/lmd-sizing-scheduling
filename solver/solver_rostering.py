@@ -634,17 +634,20 @@ class Solver:
     def solve_roster_objval(self) -> dict:
         self.__build_baseline_model()
         self.__build_roster_model()
+        self.m.setParam("OutputFlag", 0) # No logs
         self.m.optimize()
         return self.__roster_objval()
 
     def solve_baseline_objval(self) -> dict:
         self.__build_baseline_model()
+        self.m.setParam("OutputFlag", 0) # No logs
         self.m.optimize()
         return self.__roster_objval()
 
     def solve_roster_output(self) -> dict:
         self.__build_baseline_model()
         self.__build_roster_model()
+        self.m.setParam("OutputFlag", 0) # No logs
         self.m.optimize()
         return self.__roster_output()
 
