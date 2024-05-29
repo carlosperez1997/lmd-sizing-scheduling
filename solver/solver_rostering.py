@@ -699,6 +699,7 @@ class Solver:
         self.__build_baseline_model()
         self.__build_roster_model()
         self.m.setParam("OutputFlag", 0) # No logs
+        self.m.setParam("TimeLimit", 5*60) # Time Limit
         self.m.optimize()
         return self.__roster_output()
 
