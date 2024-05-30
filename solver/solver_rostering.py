@@ -355,7 +355,7 @@ class Instance:
         else:
             df_workforce = df_workforce[(df_workforce['model']==self.model)&(df_workforce['max_n_shifts']==self.max_n_shifts)]
         df_workforce.reset_index(drop = True, inplace=True)
-        return int(df_workforce['workforce_size_region0'].tolist()[0])
+        return (int(df_workforce['workforce_size_region0'].tolist()[0])-1)
 
 class Solver:
     args: Namespace
