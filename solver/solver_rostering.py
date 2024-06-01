@@ -539,6 +539,20 @@ class Solver:
         ), name = 'max_different_start2')
 
     def __basic_output(self) -> dict:
+
+        #decision variables
+        #   k: tupledict #(e,a,theta,day)
+        k = {}
+        for key, value in self.k.items():
+            if value.X > 0:
+                k[key] = value.X
+
+        #   omega: tupledict #(s,a,theta,day)
+        omega = {}
+        for key, value in self.omega.items():
+            if value.X > 0:
+                omega[key] = value.X
+
         output = {
             'instance': [self.i.ibasename],
             'city': [self.i.ibasename.split('_')[0]],
@@ -547,6 +561,12 @@ class Solver:
             'region_multiplier': [self.i.reg_multiplier],
             'global_multiplier': [self.i.glb_multiplier],
             'model': [self.args.model],
+            'elapsed_time': self.m.Runtime,
+            'n_variables': self.m.NumVars,
+            'n_constraints': self.m.NumConstrs,
+            'n_nonzeroes': self.m.NumNZs,
+            'k': k, 
+            'omega': omega, 
         }
         if self.i.model == 'partflex':
             output['max_n_shifts'] = [self.i.max_n_shifts]
@@ -659,6 +679,10 @@ class Solver:
 
         results = {
             # Instance
+            'elapsed_time': self.m.Runtime,
+            'n_variables': self.m.NumVars,
+            'n_constraints': self.m.NumConstrs,
+            'n_nonzeroes': self.m.NumNZs,
             'regions': self.i.regions,
             'reg_areas': self.i.reg_areas,
             'shifts': self.i.shifts,
@@ -699,7 +723,6 @@ class Solver:
         self.__build_baseline_model()
         self.__build_roster_model()
         self.m.setParam("OutputFlag", 0) # No logs
-        #self.m.setParam("TimeLimit", 60*60) # Time Limit
         self.m.optimize()
         return self.__roster_output()
 
