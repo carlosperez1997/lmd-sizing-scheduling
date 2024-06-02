@@ -355,7 +355,7 @@ class Instance:
         else:
             df_workforce = df_workforce[(df_workforce['model']==self.model)&(df_workforce['max_n_shifts']==self.max_n_shifts)]
         df_workforce.reset_index(drop = True, inplace=True)
-        return int(df_workforce['workforce_size_region0'].tolist()[0])
+        return (int(df_workforce['workforce_size_region0'].tolist()[0])-1)
 
 class Solver:
     args: Namespace
@@ -539,6 +539,20 @@ class Solver:
         ), name = 'max_different_start2')
 
     def __basic_output(self) -> dict:
+
+        #decision variables
+        #   k: tupledict #(e,a,theta,day)
+        k = {}
+        for key, value in self.k.items():
+            if value.X > 0:
+                k[key] = value.X
+
+        #   omega: tupledict #(s,a,theta,day)
+        omega = {}
+        for key, value in self.omega.items():
+            if value.X > 0:
+                omega[key] = value.X
+
         output = {
             'instance': [self.i.ibasename],
             'city': [self.i.ibasename.split('_')[0]],
@@ -547,6 +561,12 @@ class Solver:
             'region_multiplier': [self.i.reg_multiplier],
             'global_multiplier': [self.i.glb_multiplier],
             'model': [self.args.model],
+            'elapsed_time': self.m.Runtime,
+            'n_variables': self.m.NumVars,
+            'n_constraints': self.m.NumConstrs,
+            'n_nonzeroes': self.m.NumNZs,
+            'k': k, 
+            'omega': omega, 
         }
         if self.i.model == 'partflex':
             output['max_n_shifts'] = [self.i.max_n_shifts]
@@ -631,22 +651,79 @@ class Solver:
 
         return check_output
 
+    def __roster_output(self):
+        #decision variables
+        #   k: tupledict #(e,a,theta,day)
+        k = {}
+        for key, value in self.k.items():
+            if value.X > 0:
+                k[key] = value.X
+
+        #   omega: tupledict #(s,a,theta,day)
+        omega = {}
+        for key, value in self.omega.items():
+            if value.X > 0:
+                omega[key] = value.X
+
+        #   r: tupledict #(e,p,day)
+        r = {}
+        for key, value in self.r.items():
+            if value.X > 0:
+                r[key] = value.X
+
+        #   U: tupledict #(e, p)
+        U = {}
+        for key, value in self.U.items():
+            if value.X > 0:
+                U[key] = value.X
+
+        results = {
+            # Instance
+            'elapsed_time': self.m.Runtime,
+            'n_variables': self.m.NumVars,
+            'n_constraints': self.m.NumConstrs,
+            'n_nonzeroes': self.m.NumNZs,
+            'regions': self.i.regions,
+            'reg_areas': self.i.reg_areas,
+            'shifts': self.i.shifts,
+            'days': self.i.days,
+            'employees': self.i.employees,
+            'area': self.i.reg_areas,
+            'periods': self.i.periods,
+            'hmax': self.i.h_max,
+            'hmin': self.i.h_min,
+            # Model output
+            'obj_val': self.m.ObjVal, 
+            'status': self.m.status, 
+            'gap': self.m.MIPGap,
+            # Decision vars
+            'k': k, 
+            'omega': omega, 
+            'r': r, 
+            'U': U,
+        }
+
+        return results
+
+
     def solve_roster_objval(self) -> dict:
         self.__build_baseline_model()
         self.__build_roster_model()
         self.m.setParam("OutputFlag", 0) # No logs
-        self.m.setParam("TimeLimit", 120)
         self.m.optimize()
         return self.__roster_objval()
 
     def solve_baseline_objval(self) -> dict:
         self.__build_baseline_model()
+        self.m.setParam("OutputFlag", 0) # No logs
         self.m.optimize()
         return self.__roster_objval()
 
     def solve_roster_output(self) -> dict:
         self.__build_baseline_model()
         self.__build_roster_model()
+        self.m.setParam("OutputFlag", 0) # No logs
+        self.m.setParam('MIPGap', 0.01)
         self.m.optimize()
         return self.__roster_output()
 
@@ -679,7 +756,12 @@ def run_roster_solver_objval(model, instance_file_weekday, shift_file_weekday, i
 
     return roster_results
 
-def run_roster_solver_objval_w_baseline(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None, expand_workforce_to_regions=None):
+def run_roster_solver_objval_w_baseline(model, instance_file_weekday, 
+                                        shift_file_weekday, instance_file_weekend, 
+                                        shift_file_weekend, workforce_dict, 
+                                        outsourcing_cost_multiplier, regional_multiplier, global_multiplier, 
+                                        h_min, h_max, max_n_diff, 
+                                        max_n_shifts=None, expand_workforce_to_regions=None):
     args = Namespace(
         model=model,
         instance_file_weekday=instance_file_weekday,
@@ -704,7 +786,7 @@ def run_roster_solver_objval_w_baseline(model, instance_file_weekday, shift_file
     solver = Solver(args=args, i=i)
 
     baseline_results = solver.solve_baseline_objval()
-    roster_results = solver.solve_roster_objval()
+    roster_results = solver.solve_roster_output()
 
     return baseline_results, roster_results
 
