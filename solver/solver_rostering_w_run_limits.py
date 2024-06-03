@@ -560,13 +560,7 @@ class Solver:
             'outsourcing_cost_multiplier': [self.args.outsourcing_cost_multiplier],
             'region_multiplier': [self.i.reg_multiplier],
             'global_multiplier': [self.i.glb_multiplier],
-            'model': [self.args.model],
-            'elapsed_time': self.m.Runtime,
-            'n_variables': self.m.NumVars,
-            'n_constraints': self.m.NumConstrs,
-            'n_nonzeroes': self.m.NumNZs,
-            'k': k, 
-            'omega': omega, 
+            'model': [self.args.model]
         }
         if self.i.model == 'partflex':
             output['max_n_shifts'] = [self.i.max_n_shifts]
@@ -723,7 +717,7 @@ class Solver:
         self.__build_baseline_model()
         self.__build_roster_model()
         self.m.setParam("OutputFlag", 0) # No logs
-        self.m.setParam('MIPGap', 0.01)
+        # self.m.setParam('MIPGap', 0.01)
         self.m.optimize()
         return self.__roster_output()
 

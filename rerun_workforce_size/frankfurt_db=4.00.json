@@ -1,0 +1,580 @@
+{
+  "instance_file_base": [
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00",
+    "frankfurt_db=4.00"
+  ],
+  "city": [
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt",
+    "frankfurt"
+  ],
+  "demand_baseline": [
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    4.0
+  ],
+  "model": [
+    "fixed",
+    "partflex",
+    "flex",
+    "partflex",
+    "partflex",
+    "fixed",
+    "partflex",
+    "flex",
+    "partflex",
+    "partflex",
+    "fixed",
+    "partflex",
+    "flex",
+    "partflex",
+    "partflex",
+    "fixed",
+    "partflex",
+    "flex",
+    "partflex",
+    "partflex",
+    "fixed",
+    "partflex",
+    "flex",
+    "partflex",
+    "partflex"
+  ],
+  "max_n_shifts": [
+    null,
+    2,
+    null,
+    3,
+    4,
+    null,
+    2,
+    null,
+    3,
+    4,
+    null,
+    2,
+    null,
+    3,
+    4,
+    null,
+    2,
+    null,
+    3,
+    4,
+    null,
+    2,
+    null,
+    3,
+    4
+  ],
+  "outsourcing_cost_multiplier": [
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.2,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.5,
+    2.5,
+    2.5,
+    2.5,
+    2.5
+  ],
+  "regional_multiplier": [
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5
+  ],
+  "global_multiplier": [
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8
+  ],
+  "workforce_size_region0": [
+    67,
+    67,
+    58,
+    58,
+    58,
+    70,
+    70,
+    61,
+    61,
+    61,
+    72,
+    72,
+    61,
+    61,
+    61,
+    74,
+    74,
+    63,
+    63,
+    63,
+    78,
+    78,
+    63,
+    63,
+    63
+  ],
+  "objective_value_prev": [
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN
+  ],
+  "objective_value": [
+    15075.21,
+    15075.21,
+    14739.7,
+    14739.7,
+    14739.7,
+    18427.83,
+    18427.83,
+    18062.8,
+    18062.8,
+    18062.8,
+    21768.27,
+    21768.27,
+    21377.95,
+    21377.95,
+    21377.95,
+    23988.64,
+    23988.64,
+    23587.18,
+    23587.18,
+    23587.18,
+    29525.89,
+    29525.89,
+    29102.06,
+    29102.06,
+    29102.06
+  ],
+  "objective_value_next": [
+    15075.21,
+    15075.21,
+    14739.7,
+    14739.7,
+    14739.7,
+    18427.83,
+    18427.83,
+    18063.39,
+    18063.39,
+    18063.39,
+    21768.27,
+    21768.27,
+    21377.95,
+    21377.95,
+    21377.95,
+    23988.64,
+    23988.64,
+    23588.14,
+    23588.14,
+    23588.14,
+    29525.89,
+    29525.89,
+    29102.31,
+    29102.31,
+    29102.31
+  ],
+  "run_time": [
+    6.527212381362915,
+    6.527212381362915,
+    412.8913083076477,
+    412.8913083076477,
+    412.8913083076477,
+    7.362932443618774,
+    7.362932443618774,
+    50.8147988319397,
+    50.8147988319397,
+    50.8147988319397,
+    7.570797920227051,
+    7.570797920227051,
+    32.49083924293518,
+    32.49083924293518,
+    32.49083924293518,
+    7.613393068313599,
+    7.613393068313599,
+    41.52827978134155,
+    41.52827978134155,
+    41.52827978134155,
+    8.430366277694702,
+    8.430366277694702,
+    48.490633726119995,
+    48.490633726119995,
+    48.490633726119995
+  ],
+  "dict_run": [
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    },
+    {
+      "fixed-None": [
+        "partflex-2"
+      ],
+      "flex-None": [
+        "partflex-3",
+        "partflex-4"
+      ]
+    }
+  ]
+}
