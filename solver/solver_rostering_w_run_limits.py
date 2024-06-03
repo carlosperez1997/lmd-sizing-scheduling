@@ -198,7 +198,7 @@ class Instance:
             city = city_match.group(1) if city_match else None
             demand_baseline = db_match.group(1) if db_match else None
 
-            self.workforce_file = f'../workforce_size/{city}_db={demand_baseline}.json'
+            self.workforce_file = f'../rerun_workforce_size/{city}_db={demand_baseline}.json'
 
             #import in the optimal workforce size
             workforce_size = self.__load_workforce(self.workforce_file)
@@ -568,6 +568,63 @@ class Solver:
             output['max_n_shifts'] = [np.nan]
         return output
 
+    def __basic_output_all(self) -> dict:
+
+        #decision variables
+        #   k: tupledict #(e,a,theta,day)
+        k = {}
+        for key, value in self.k.items():
+            if value.X > 0:
+                k[key] = value.X
+
+        #   omega: tupledict #(s,a,theta,day)
+        omega = {}
+        for key, value in self.omega.items():
+            if value.X > 0:
+                omega[key] = value.X
+
+        output = {
+            'instance': [self.i.ibasename],
+            'city': [self.i.ibasename.split('_')[0]],
+            'demand_baseline': [self.i.i_weekday['demand_baseline']],
+            'outsourcing_cost_multiplier': [self.args.outsourcing_cost_multiplier],
+            'region_multiplier': [self.i.reg_multiplier],
+            'global_multiplier': [self.i.glb_multiplier],
+            'model': [self.args.model],
+            'elapsed_time': self.m.Runtime,
+            'n_variables': self.m.NumVars,
+            'n_constraints': self.m.NumConstrs,
+            'n_nonzeroes': self.m.NumNZs,
+            'k': k, 
+            'omega': omega, 
+        }
+        if self.i.model == 'partflex':
+            output['max_n_shifts'] = [self.i.max_n_shifts]
+        else:
+            output['max_n_shifts'] = [np.nan]
+        return output
+
+    def __roster_objval_all(self) -> dict:
+        basic_output = self.__basic_output_all()
+
+        total_employees = 0
+        for region in self.i.regions:
+            total_employees += self.i.n_employees[region]
+        basic_output['workforce_size'] = [total_employees]
+
+        #can only get optimal value if there was one
+        if self.m.Status == GRB.OPTIMAL:
+            k = sum(self.k[(employee, area, theta, day)].X for region in self.i.regions for area in self.i.reg_areas[region] for employee in self.i.employees[region] for day in self.i.days for theta in self.i.periods[day])
+            basic_output['wage_costs'] = [k]
+            basic_output['objective_value'] = [self.m.ObjVal]
+            basic_output['objective_value_post_wage'] = [self.m.ObjVal - k]
+        else:
+            basic_output['wage_costs'] = [np.nan]
+            basic_output['objective_value'] = [np.nan]
+            basic_output['objective_value_post_wage'] = [np.nan]
+        
+        return basic_output
+
     def __roster_objval(self) -> dict:
         basic_output = self.__basic_output()
 
@@ -711,7 +768,7 @@ class Solver:
         self.__build_baseline_model()
         self.m.setParam("OutputFlag", 0) # No logs
         self.m.optimize()
-        return self.__roster_objval()
+        return self.__roster_objval_all()
 
     def solve_roster_output(self) -> dict:
         self.__build_baseline_model()
@@ -719,7 +776,7 @@ class Solver:
         self.m.setParam("OutputFlag", 0) # No logs
         # self.m.setParam('MIPGap', 0.01)
         self.m.optimize()
-        return self.__roster_output()
+        return self.__roster_objval_all()
 
 #function call run execution
 def run_roster_solver_objval(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None, expand_workforce_to_regions=None):
