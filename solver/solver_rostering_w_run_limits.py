@@ -776,7 +776,7 @@ class Solver:
         self.m.setParam("OutputFlag", 0) # No logs
         # self.m.setParam('MIPGap', 0.01)
         self.m.optimize()
-        return self.__roster_objval_all()
+        return self.__roster_output()
 
 #function call run execution
 def run_roster_solver_objval(model, instance_file_weekday, shift_file_weekday, instance_file_weekend, shift_file_weekend, workforce_dict, outsourcing_cost_multiplier, regional_multiplier, global_multiplier, h_min, h_max, max_n_diff, max_n_shifts=None, expand_workforce_to_regions=None):
