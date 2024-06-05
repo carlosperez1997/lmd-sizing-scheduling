@@ -444,12 +444,10 @@ class Solver:
 
         # constraint - ensuring employees work whole of shift
         self.m.addConstrs((
-            sum(
-                self.k[(employee, area, theta, day)]
-                for area in self.i.reg_areas[region]
-            ) >=
+            self.k[(employee, area, theta, day)] <=
             self.w[(employee, day)]
             for region in self.i.regions
+            for area in self.i.reg_areas[region]
             for employee in self.i.employees[region]
             for day in self.i.days
             for theta in self.i.periods[day]
@@ -585,6 +583,12 @@ class Solver:
             if value.X > 0:
                 omega[key] = value.X
 
+
+        w = {}
+        for key, value in self.w.items():
+            if value.X > 0:
+                w[key] = value.X
+
         output = {
             'instance': [self.i.ibasename],
             'city': [self.i.ibasename.split('_')[0]],
@@ -598,7 +602,8 @@ class Solver:
             'n_constraints': self.m.NumConstrs,
             'n_nonzeroes': self.m.NumNZs,
             'k': k, 
-            'omega': omega, 
+            'omega': omega,
+            'w': w
         }
         if self.i.model == 'partflex':
             output['max_n_shifts'] = [self.i.max_n_shifts]
